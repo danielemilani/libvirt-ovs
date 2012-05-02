@@ -1,0 +1,2173 @@
+# WARNING: generated from the following:
+# libvirt_public.syms libvirt_private.syms libvirt_linux.syms libvirt_daemon.syms libvirt_nwfilter.syms libvirt_vmx.syms libvirt_network.syms libvirt_sasl.syms ../config.status
+
+#
+# Officially exported symbols, for which header
+# file definitions are installed in /usr/include/libvirt
+# either from libvirt.h and virterror.h
+#
+# Versions here are *fixed* to match the libvirt version
+# at which the symbol was introduced. This ensures that
+# a new client app requiring symbol foo() can't accidentally
+# run with old libvirt.so not providing foo() - the global
+# soname version info can't enforce this since we never
+# change the soname
+#
+LIBVIRT_0.0.3 {
+    global:
+        virConnectClose;
+        virConnectGetType;
+        virConnectGetVersion;
+        virConnectListDomains;
+        virConnectNumOfDomains;
+        virConnectOpen;
+        virConnectOpenReadOnly;
+
+        virDomainCreateLinux;
+        virDomainDestroy;
+        virDomainFree;
+        virDomainGetID;
+        virDomainGetInfo;
+        virDomainGetMaxMemory;
+        virDomainGetName;
+        virDomainGetOSType;
+        virDomainGetXMLDesc;
+        virDomainLookupByID;
+        virDomainLookupByName;
+        virDomainRestore;
+        virDomainResume;
+        virDomainSave;
+        virDomainSetMaxMemory;
+        virDomainShutdown;
+        virDomainSuspend;
+
+        virGetVersion;
+};
+
+LIBVIRT_0.0.5 {
+    global:
+        virDomainLookupByUUID;
+        virDomainGetUUID;
+} LIBVIRT_0.0.3;
+
+LIBVIRT_0.1.0 {
+    global:
+        virInitialize;
+        virNodeGetInfo;
+        virDomainReboot;
+
+        virCopyLastError;
+        virConnSetErrorFunc;
+        virResetLastError;
+        virResetError;
+        virConnGetLastError;
+        virGetLastError;
+        virSetErrorFunc;
+        virConnCopyLastError;
+        virConnResetLastError;
+        virDefaultErrorFunc;
+} LIBVIRT_0.0.5;
+
+LIBVIRT_0.1.1 {
+    global:
+        virDomainLookupByUUIDString;
+        virDomainGetUUIDString;
+        virDomainSetMemory;
+        virDomainDefineXML;
+        virDomainCreate;
+        virDomainUndefine;
+        virConnectListDefinedDomains;
+} LIBVIRT_0.1.0;
+
+LIBVIRT_0.1.4 {
+    global:
+        virDomainSetVcpus;
+        virDomainPinVcpu;
+        virDomainGetVcpus;
+} LIBVIRT_0.1.1;
+
+LIBVIRT_0.1.5 {
+    global:
+        virConnectNumOfDefinedDomains;
+} LIBVIRT_0.1.4;
+
+LIBVIRT_0.1.9 {
+    global:
+        virDomainCoreDump;
+        virDomainAttachDevice;
+        virDomainDetachDevice;
+} LIBVIRT_0.1.5;
+
+LIBVIRT_0.2.0 {
+    global:
+        virConnectNumOfNetworks;
+        virConnectListNetworks;
+        virConnectNumOfDefinedNetworks;
+        virConnectListDefinedNetworks;
+        virNetworkLookupByName;
+        virNetworkLookupByUUID;
+        virNetworkLookupByUUIDString;
+        virNetworkCreateXML;
+        virNetworkDefineXML;
+        virNetworkUndefine;
+        virNetworkCreate;
+        virNetworkDestroy;
+        virNetworkFree;
+        virNetworkGetName;
+        virNetworkGetUUID;
+        virNetworkGetUUIDString;
+        virNetworkGetXMLDesc;
+        virNetworkGetBridgeName;
+} LIBVIRT_0.1.9;
+
+LIBVIRT_0.2.1 {
+    global:
+        virConnectGetCapabilities;
+        virConnectGetMaxVcpus;
+        virDomainGetMaxVcpus;
+        virDomainGetAutostart;
+        virDomainSetAutostart;
+        virNetworkGetAutostart;
+        virNetworkSetAutostart;
+} LIBVIRT_0.2.0;
+
+LIBVIRT_0.2.3 {
+    global:
+        virDomainGetSchedulerType;
+        virDomainGetSchedulerParameters;
+        virDomainSetSchedulerParameters;
+} LIBVIRT_0.2.1;
+
+LIBVIRT_0.3.0 {
+    global:
+        virConnectGetHostname;
+        virConnectGetURI;
+        virDomainGetConnect;
+        virNetworkGetConnect;
+} LIBVIRT_0.2.3;
+
+LIBVIRT_0.3.2 {
+    global:
+        virDomainMigrate;
+        virDomainBlockStats;
+        virDomainInterfaceStats;
+} LIBVIRT_0.3.0;
+
+LIBVIRT_0.3.3 {
+    global:
+        virNodeGetCellsFreeMemory;
+        virNodeGetFreeMemory;
+} LIBVIRT_0.3.2;
+
+LIBVIRT_0.4.0 {
+    global:
+        virConnectOpenAuth;
+        virConnectAuthPtrDefault;
+} LIBVIRT_0.3.3;
+
+LIBVIRT_0.4.1 {
+    global:
+        virStoragePoolGetConnect;
+        virConnectNumOfStoragePools;
+        virConnectNumOfDefinedStoragePools;
+        virConnectListStoragePools;
+        virConnectListDefinedStoragePools;
+        virStoragePoolLookupByName;
+        virStoragePoolLookupByUUID;
+        virStoragePoolLookupByUUIDString;
+        virStoragePoolLookupByVolume;
+        virStoragePoolCreateXML;
+        virStoragePoolDefineXML;
+        virStoragePoolUndefine;
+        virStoragePoolCreate;
+        virStoragePoolBuild;
+        virStoragePoolDestroy;
+        virStoragePoolDelete;
+        virStoragePoolRefresh;
+        virStoragePoolFree;
+        virStoragePoolGetName;
+        virStoragePoolGetUUID;
+        virStoragePoolGetUUIDString;
+        virStoragePoolGetInfo;
+        virStoragePoolGetXMLDesc;
+        virStoragePoolSetAutostart;
+        virStoragePoolGetAutostart;
+        virStoragePoolNumOfVolumes;
+        virStoragePoolListVolumes;
+
+        virStorageVolGetConnect;
+        virStorageVolLookupByName;
+        virStorageVolLookupByKey;
+        virStorageVolLookupByPath;
+        virStorageVolCreateXML;
+        virStorageVolDelete;
+        virStorageVolFree;
+        virStorageVolGetName;
+        virStorageVolGetKey;
+        virStorageVolGetInfo;
+        virStorageVolGetXMLDesc;
+        virStorageVolGetPath;
+} LIBVIRT_0.4.0;
+
+LIBVIRT_0.4.2 {
+    global:
+        virDomainBlockPeek;
+        virDomainMemoryPeek;
+} LIBVIRT_0.4.1;
+
+LIBVIRT_0.4.5 {
+    global:
+        virConnectFindStoragePoolSources;
+} LIBVIRT_0.4.2;
+
+LIBVIRT_0.5.0 {
+    global:
+        virDomainCreateXML;
+        virEventRegisterImpl;
+        virConnectDomainEventRegister;
+        virConnectDomainEventDeregister;
+
+        virNodeNumOfDevices;
+        virNodeListDevices;
+        virNodeDeviceLookupByName;
+        virNodeDeviceFree;
+        virNodeDeviceGetXMLDesc;
+        virNodeDeviceGetName;
+        virNodeDeviceGetParent;
+        virNodeDeviceNumOfCaps;
+        virNodeDeviceListCaps;
+
+} LIBVIRT_0.4.5;
+
+LIBVIRT_0.6.0 {
+    global:
+        virConnectRef;
+        virDomainRef;
+        virNetworkRef;
+        virStoragePoolRef;
+        virStorageVolRef;
+        virNodeDeviceRef;
+
+} LIBVIRT_0.5.0;
+
+LIBVIRT_0.6.1 {
+    global:
+        virFreeError;
+        virSaveLastError;
+        virNodeDeviceDettach;
+        virNodeDeviceReAttach;
+        virNodeDeviceReset;
+        virDomainGetSecurityLabel;
+        virNodeGetSecurityModel;
+} LIBVIRT_0.6.0;
+
+LIBVIRT_0.6.3 {
+    global:
+        virNodeDeviceCreateXML;
+        virNodeDeviceDestroy;
+} LIBVIRT_0.6.1;
+
+LIBVIRT_0.6.4 {
+    global:
+        virInterfaceGetConnect;
+        virConnectNumOfInterfaces;
+        virConnectListInterfaces;
+        virInterfaceLookupByName;
+        virInterfaceLookupByMACString;
+        virInterfaceGetName;
+        virInterfaceGetMACString;
+        virInterfaceGetXMLDesc;
+        virInterfaceRef;
+        virInterfaceFree;
+        virInterfaceDefineXML;
+        virInterfaceUndefine;
+        virInterfaceCreate;
+        virInterfaceDestroy;
+        virStorageVolCreateXMLFrom;
+        virConnectDomainXMLFromNative;
+        virConnectDomainXMLToNative;
+} LIBVIRT_0.6.3;
+
+LIBVIRT_0.7.0 {
+    global:
+        virConnectNumOfDefinedInterfaces;
+        virConnectListDefinedInterfaces;
+} LIBVIRT_0.6.4;
+
+LIBVIRT_0.7.1 {
+    global:
+        virSecretGetConnect;
+        virConnectNumOfSecrets;
+        virConnectListSecrets;
+        virSecretLookupByUUID;
+        virSecretLookupByUUIDString;
+        virSecretLookupByUsage;
+        virSecretDefineXML;
+        virSecretGetUUID;
+        virSecretGetUUIDString;
+        virSecretGetUsageType;
+        virSecretGetUsageID;
+        virSecretGetXMLDesc;
+        virSecretSetValue;
+        virSecretGetValue;
+        virSecretUndefine;
+        virSecretRef;
+        virSecretFree;
+} LIBVIRT_0.7.0;
+
+LIBVIRT_0.7.2 {
+    global:
+        virStreamNew;
+        virStreamRef;
+        virStreamSend;
+        virStreamRecv;
+        virStreamSendAll;
+        virStreamRecvAll;
+        virStreamEventAddCallback;
+        virStreamEventUpdateCallback;
+        virStreamEventRemoveCallback;
+        virStreamFinish;
+        virStreamAbort;
+        virStreamFree;
+        virDomainMigrateToURI;
+} LIBVIRT_0.7.1;
+
+LIBVIRT_0.7.3 {
+    global:
+        virConnectGetLibVersion;
+        virConnectIsEncrypted;
+        virConnectIsSecure;
+        virDomainIsActive;
+        virDomainIsPersistent;
+        virNetworkIsActive;
+        virNetworkIsPersistent;
+        virStoragePoolIsActive;
+        virStoragePoolIsPersistent;
+        virInterfaceIsActive;
+} LIBVIRT_0.7.2;
+
+LIBVIRT_0.7.5 {
+    global:
+        virConnectCompareCPU;
+        virDomainMemoryStats;
+} LIBVIRT_0.7.3;
+
+LIBVIRT_0.7.7 {
+    global:
+        virDomainAttachDeviceFlags;
+        virDomainDetachDeviceFlags;
+        virConnectBaselineCPU;
+        virDomainGetJobInfo;
+        virDomainAbortJob;
+} LIBVIRT_0.7.5;
+
+LIBVIRT_0.8.0 {
+    global:
+        virStorageVolWipe;
+        virDomainMigrateSetMaxDowntime;
+        virConnectDomainEventRegisterAny;
+        virConnectDomainEventDeregisterAny;
+        virDomainUpdateDeviceFlags;
+        virConnectListNWFilters;
+        virConnectNumOfNWFilters;
+        virNWFilterLookupByName;
+        virNWFilterLookupByUUID;
+        virNWFilterLookupByUUIDString;
+        virNWFilterFree;
+        virNWFilterGetName;
+        virNWFilterGetUUID;
+        virNWFilterGetUUIDString;
+        virNWFilterGetXMLDesc;
+        virNWFilterRef;
+        virNWFilterDefineXML;
+        virNWFilterUndefine;
+        virDomainManagedSave;
+        virDomainHasManagedSaveImage;
+        virDomainManagedSaveRemove;
+        virDomainSnapshotCreateXML;
+        virDomainSnapshotGetXMLDesc;
+        virDomainSnapshotNum;
+        virDomainSnapshotListNames;
+        virDomainSnapshotLookupByName;
+        virDomainHasCurrentSnapshot;
+        virDomainSnapshotCurrent;
+        virDomainRevertToSnapshot;
+        virDomainSnapshotDelete;
+        virDomainSnapshotFree;
+} LIBVIRT_0.7.7;
+
+
+LIBVIRT_0.8.1 {
+    global:
+        virDomainGetBlockInfo;
+} LIBVIRT_0.8.0;
+
+
+LIBVIRT_0.8.2 {
+    global:
+        virDomainCreateWithFlags;
+} LIBVIRT_0.8.1;
+
+LIBVIRT_0.8.5 {
+    global:
+        virDomainSetMemoryParameters;
+        virDomainGetMemoryParameters;
+        virDomainGetVcpusFlags;
+        virDomainSetVcpusFlags;
+} LIBVIRT_0.8.2;
+
+LIBVIRT_0.8.6 {
+    global:
+        virDomainOpenConsole;
+        virDomainIsUpdated;
+} LIBVIRT_0.8.5;
+
+LIBVIRT_0.8.8 {
+    global:
+        virConnectGetSysinfo;
+} LIBVIRT_0.8.6;
+
+LIBVIRT_0.9.0 {
+    global:
+        virDomainGetBlkioParameters;
+        virDomainMigrateSetMaxSpeed;
+        virDomainSetBlkioParameters;
+        virDomainSetMemoryFlags;
+        virEventRegisterDefaultImpl;
+        virEventRunDefaultImpl;
+        virStorageVolDownload;
+        virStorageVolUpload;
+} LIBVIRT_0.8.8;
+
+LIBVIRT_0.9.2 {
+    global:
+        virDomainGetSchedulerParametersFlags;
+        virDomainGetState;
+        virDomainInjectNMI;
+        virDomainMigrate2;
+        virDomainMigrateToURI2;
+        virDomainScreenshot;
+        virDomainSetSchedulerParametersFlags;
+        virInterfaceChangeBegin;
+        virInterfaceChangeCommit;
+        virInterfaceChangeRollback;
+} LIBVIRT_0.9.0;
+
+LIBVIRT_0.9.3 {
+    global:
+        virDomainGetControlInfo;
+        virDomainGetVcpuPinInfo;
+        virDomainPinVcpuFlags;
+        virDomainSendKey;
+        virEventAddHandle;
+        virEventAddTimeout;
+        virEventRemoveHandle;
+        virEventRemoveTimeout;
+        virEventUpdateHandle;
+        virEventUpdateTimeout;
+        virNodeGetCPUStats;
+        virNodeGetMemoryStats;
+} LIBVIRT_0.9.2;
+
+LIBVIRT_0.9.4 {
+    global:
+        virDomainRestoreFlags;
+        virDomainSaveFlags;
+        virDomainSaveImageDefineXML;
+        virDomainSaveImageGetXMLDesc;
+        virDomainUndefineFlags;
+        virDomainDestroyFlags;
+        virDomainBlockJobAbort;
+        virDomainGetBlockJobInfo;
+        virDomainBlockJobSetSpeed;
+        virDomainBlockPull;
+} LIBVIRT_0.9.3;
+
+LIBVIRT_0.9.5 {
+    global:
+        virDomainBlockStatsFlags;
+        virDomainMigrateGetMaxSpeed;
+        virDomainSnapshotGetConnect;
+        virDomainSnapshotGetDomain;
+        virDomainSnapshotGetName;
+} LIBVIRT_0.9.4;
+
+LIBVIRT_0.9.7 {
+    global:
+        virDomainOpenGraphics;
+        virDomainReset;
+        virDomainSnapshotGetParent;
+        virDomainSnapshotListChildrenNames;
+        virDomainSnapshotNumChildren;
+} LIBVIRT_0.9.5;
+
+LIBVIRT_0.9.8 {
+    global:
+        virConnectIsAlive;
+        virConnectSetKeepAlive;
+        virDomainBlockResize;
+        virDomainGetBlockIoTune;
+        virDomainSetBlockIoTune;
+        virNodeSuspendForDuration;
+} LIBVIRT_0.9.7;
+
+LIBVIRT_0.9.9 {
+    global:
+        virDomainGetInterfaceParameters;
+        virDomainGetNumaParameters;
+        virDomainSetInterfaceParameters;
+        virDomainSetNumaParameters;
+} LIBVIRT_0.9.8;
+
+LIBVIRT_0.9.10 {
+    global:
+        virDomainBlockRebase;
+        virDomainGetCPUStats;
+        virDomainGetDiskErrors;
+        virDomainGetMetadata;
+        virDomainPMSuspendForDuration;
+        virDomainSetMetadata;
+        virDomainShutdownFlags;
+        virStorageVolResize;
+        virStorageVolWipePattern;
+} LIBVIRT_0.9.9;
+
+LIBVIRT_0.9.11 {
+    global:
+        virDomainPMWakeup;
+} LIBVIRT_0.9.10;
+
+LIBVIRT_0.9.12 {
+    global:
+        virNetworkGetBridgeType;
+} LIBVIRT_0.9.11;
+
+# .... define new API here using predicted next version number ....
+
+
+# Private symbols
+
+LIBVIRT_PRIVATE_0.9.11 {
+
+global:
+
+#
+# General private symbols. Add symbols here, and see Makefile.am for
+# more details.
+#
+# Keep this file sorted by header name, then by symbols with each header.
+#
+
+# bitmap.h
+virBitmapAlloc;
+virBitmapClearBit;
+virBitmapFree;
+virBitmapGetBit;
+virBitmapSetBit;
+virBitmapString;
+
+
+# buf.h
+virBufferAdd;
+virBufferAddChar;
+virBufferAdjustIndent;
+virBufferAsprintf;
+virBufferContentAndReset;
+virBufferError;
+virBufferEscape;
+virBufferEscapeSexpr;
+virBufferEscapeShell;
+virBufferEscapeString;
+virBufferFreeAndReset;
+virBufferGetIndent;
+virBufferStrcat;
+virBufferURIEncodeString;
+virBufferUse;
+virBufferVasprintf;
+
+
+# caps.h
+virCapabilitiesAddGuest;
+virCapabilitiesAddGuestDomain;
+virCapabilitiesAddGuestFeature;
+virCapabilitiesAddHostFeature;
+virCapabilitiesAddHostMigrateTransport;
+virCapabilitiesAddHostNUMACell;
+virCapabilitiesAllocMachines;
+virCapabilitiesDefaultGuestArch;
+virCapabilitiesDefaultGuestEmulator;
+virCapabilitiesDefaultGuestMachine;
+virCapabilitiesFormatXML;
+virCapabilitiesFree;
+virCapabilitiesFreeMachines;
+virCapabilitiesFreeNUMAInfo;
+virCapabilitiesGenerateMac;
+virCapabilitiesIsEmulatorRequired;
+virCapabilitiesNew;
+virCapabilitiesSetEmulatorRequired;
+virCapabilitiesSetHostCPU;
+virCapabilitiesSetMacPrefix;
+
+
+# cgroup.h
+virCgroupAddTask;
+virCgroupAllowDeviceMajor;
+virCgroupAllowDevicePath;
+virCgroupControllerTypeFromString;
+virCgroupControllerTypeToString;
+virCgroupDenyAllDevices;
+virCgroupDenyDevicePath;
+virCgroupForDomain;
+virCgroupForDriver;
+virCgroupForVcpu;
+virCgroupFree;
+virCgroupGetBlkioWeight;
+virCgroupGetCpuCfsPeriod;
+virCgroupGetCpuCfsQuota;
+virCgroupGetCpuShares;
+virCgroupGetCpuacctPercpuUsage;
+virCgroupGetCpuacctStat;
+virCgroupGetCpuacctUsage;
+virCgroupGetCpusetMems;
+virCgroupGetFreezerState;
+virCgroupGetMemSwapHardLimit;
+virCgroupGetMemoryHardLimit;
+virCgroupGetMemorySoftLimit;
+virCgroupGetMemoryUsage;
+virCgroupKill;
+virCgroupKillPainfully;
+virCgroupKillRecursive;
+virCgroupMounted;
+virCgroupPathOfController;
+virCgroupRemove;
+virCgroupSetBlkioDeviceWeight;
+virCgroupSetBlkioWeight;
+virCgroupSetCpuCfsPeriod;
+virCgroupSetCpuCfsQuota;
+virCgroupSetCpuShares;
+virCgroupSetCpusetMems;
+virCgroupSetFreezerState;
+virCgroupSetMemSwapHardLimit;
+virCgroupSetMemory;
+virCgroupSetMemoryHardLimit;
+virCgroupSetMemorySoftLimit;
+
+
+# command.h
+virCommandAbort;
+virCommandAddArg;
+virCommandAddArgBuffer;
+virCommandAddArgFormat;
+virCommandAddArgList;
+virCommandAddArgPair;
+virCommandAddArgSet;
+virCommandAddEnvBuffer;
+virCommandAddEnvFormat;
+virCommandAddEnvPair;
+virCommandAddEnvPass;
+virCommandAddEnvPassCommon;
+virCommandAddEnvString;
+virCommandAllowCap;
+virCommandClearCaps;
+virCommandDaemonize;
+virCommandExec;
+virCommandFree;
+virCommandHandshakeNotify;
+virCommandHandshakeWait;
+virCommandNew;
+virCommandNewArgList;
+virCommandNewArgs;
+virCommandNonblockingFDs;
+virCommandPreserveFD;
+virCommandRequireHandshake;
+virCommandRun;
+virCommandRunAsync;
+virCommandSetErrorBuffer;
+virCommandSetErrorFD;
+virCommandSetInputBuffer;
+virCommandSetInputFD;
+virCommandSetOutputBuffer;
+virCommandSetOutputFD;
+virCommandSetPidFile;
+virCommandSetPreExecHook;
+virCommandSetWorkingDirectory;
+virCommandToString;
+virCommandTransferFD;
+virCommandTranslateStatus;
+virCommandWait;
+virCommandWriteArgLog;
+virFork;
+virPidAbort;
+virPidWait;
+virRun;
+
+
+# conf.h
+virConfFree;
+virConfFreeValue;
+virConfGetValue;
+virConfNew;
+virConfReadFile;
+virConfReadMem;
+virConfSetValue;
+virConfWriteFile;
+virConfWriteMem;
+
+
+# cpu.h
+cpuBaseline;
+cpuBaselineXML;
+cpuCompare;
+cpuCompareXML;
+cpuDataFree;
+cpuDecode;
+cpuEncode;
+cpuGuestData;
+cpuHasFeature;
+cpuMapOverride;
+cpuNodeData;
+cpuUpdate;
+
+
+# cpu_conf.h
+virCPUDefAddFeature;
+virCPUDefCopy;
+virCPUDefCopyModel;
+virCPUDefFormat;
+virCPUDefFormatBuf;
+virCPUDefFree;
+virCPUDefFreeModel;
+virCPUDefParseXML;
+virCPUModeTypeToString;
+
+
+# datatypes.h
+virGetDomain;
+virGetDomainSnapshot;
+virGetInterface;
+virGetNWFilter;
+virGetNetwork;
+virGetNodeDevice;
+virGetSecret;
+virGetStoragePool;
+virGetStorageVol;
+virGetStream;
+virUnrefConnect;
+virUnrefDomain;
+virUnrefNWFilter;
+virUnrefSecret;
+virUnrefStorageVol;
+virUnrefStream;
+
+
+# dnsmasq.h
+dnsmasqAddDhcpHost;
+dnsmasqAddHost;
+dnsmasqContextFree;
+dnsmasqContextNew;
+dnsmasqDelete;
+dnsmasqReload;
+dnsmasqSave;
+
+
+# domain_audit.h
+virDomainAuditCgroup;
+virDomainAuditCgroupMajor;
+virDomainAuditCgroupPath;
+virDomainAuditDisk;
+virDomainAuditFS;
+virDomainAuditHostdev;
+virDomainAuditMemory;
+virDomainAuditNet;
+virDomainAuditNetDevice;
+virDomainAuditRedirdev;
+virDomainAuditSecurityLabel;
+virDomainAuditStart;
+virDomainAuditStop;
+virDomainAuditVcpu;
+
+
+# domain_conf.h
+virBlkioDeviceWeightArrayClear;
+virDiskNameToBusDeviceIndex;
+virDiskNameToIndex;
+virDomainActualNetDefFree;
+virDomainAssignDef;
+virDomainBlockedReasonTypeFromString;
+virDomainBlockedReasonTypeToString;
+virDomainChrConsoleTargetTypeFromString;
+virDomainChrConsoleTargetTypeToString;
+virDomainChrDefForeach;
+virDomainChrDefFree;
+virDomainChrDefNew;
+virDomainChrSourceDefCopy;
+virDomainChrSourceDefFree;
+virDomainChrSpicevmcTypeFromString;
+virDomainChrSpicevmcTypeToString;
+virDomainChrTcpProtocolTypeFromString;
+virDomainChrTcpProtocolTypeToString;
+virDomainChrTypeFromString;
+virDomainChrTypeToString;
+virDomainClockBasisTypeToString;
+virDomainClockOffsetTypeFromString;
+virDomainClockOffsetTypeToString;
+virDomainConfigFile;
+virDomainControllerDefFree;
+virDomainControllerInsert;
+virDomainControllerInsertPreAlloced;
+virDomainControllerModelSCSITypeFromString;
+virDomainControllerModelSCSITypeToString;
+virDomainControllerModelUSBTypeFromString;
+virDomainControllerModelUSBTypeToString;
+virDomainControllerTypeToString;
+virDomainCpuPlacementModeTypeFromString;
+virDomainCpuPlacementModeTypeToString;
+virDomainCpuSetFormat;
+virDomainCpuSetParse;
+virDomainDefAddImplicitControllers;
+virDomainDefCheckABIStability;
+virDomainDefClearDeviceAliases;
+virDomainDefClearPCIAddresses;
+virDomainDefFormat;
+virDomainDefFormatInternal;
+virDomainDefFree;
+virDomainDefParseFile;
+virDomainDefParseNode;
+virDomainDefParseString;
+virDomainDeleteConfig;
+virDomainDeviceAddressIsValid;
+virDomainDeviceAddressPciMultiTypeFromString;
+virDomainDeviceAddressPciMultiTypeToString;
+virDomainDeviceAddressTypeToString;
+virDomainDeviceDefCopy;
+virDomainDeviceDefFree;
+virDomainDeviceDefParse;
+virDomainDeviceInfoIterate;
+virDomainDevicePCIAddressIsValid;
+virDomainDeviceTypeToString;
+virDomainDiskBusTypeToString;
+virDomainDiskCacheTypeFromString;
+virDomainDiskCacheTypeToString;
+virDomainDiskCopyOnReadTypeFromString;
+virDomainDiskCopyOnReadTypeToString;
+virDomainDiskDefAssignAddress;
+virDomainDiskDefForeachPath;
+virDomainDiskDefFree;
+virDomainDiskDeviceTypeToString;
+virDomainDiskErrorPolicyTypeFromString;
+virDomainDiskErrorPolicyTypeToString;
+virDomainDiskFindControllerModel;
+virDomainDiskIndexByName;
+virDomainDiskInsert;
+virDomainDiskInsertPreAlloced;
+virDomainDiskIoTypeFromString;
+virDomainDiskIoTypeToString;
+virDomainDiskPathByName;
+virDomainDiskRemove;
+virDomainDiskRemoveByName;
+virDomainDiskSnapshotTypeFromString;
+virDomainDiskSnapshotTypeToString;
+virDomainDiskTypeFromString;
+virDomainDiskTypeToString;
+virDomainFSDefFree;
+virDomainFSTypeFromString;
+virDomainFSTypeToString;
+virDomainFSWrpolicyTypeFromString;
+virDomainFSWrpolicyTypeToString;
+virDomainFindByID;
+virDomainFindByName;
+virDomainFindByUUID;
+virDomainGetRootFilesystem;
+virDomainGraphicsAuthConnectedTypeFromString;
+virDomainGraphicsAuthConnectedTypeToString;
+virDomainGraphicsDefFree;
+virDomainGraphicsListenGetAddress;
+virDomainGraphicsListenGetNetwork;
+virDomainGraphicsListenGetType;
+virDomainGraphicsListenSetAddress;
+virDomainGraphicsListenSetNetwork;
+virDomainGraphicsListenSetType;
+virDomainGraphicsSpiceChannelModeTypeFromString;
+virDomainGraphicsSpiceChannelModeTypeToString;
+virDomainGraphicsSpiceChannelNameTypeFromString;
+virDomainGraphicsSpiceChannelNameTypeToString;
+virDomainGraphicsSpiceClipboardCopypasteTypeFromString;
+virDomainGraphicsSpiceClipboardCopypasteTypeToString;
+virDomainGraphicsSpiceImageCompressionTypeFromString;
+virDomainGraphicsSpiceImageCompressionTypeToString;
+virDomainGraphicsSpiceJpegCompressionTypeFromString;
+virDomainGraphicsSpiceJpegCompressionTypeToString;
+virDomainGraphicsSpiceMouseModeTypeFromString;
+virDomainGraphicsSpiceMouseModeTypeToString;
+virDomainGraphicsSpicePlaybackCompressionTypeFromString;
+virDomainGraphicsSpicePlaybackCompressionTypeToString;
+virDomainGraphicsSpiceStreamingModeTypeFromString;
+virDomainGraphicsSpiceStreamingModeTypeToString;
+virDomainGraphicsSpiceZlibCompressionTypeFromString;
+virDomainGraphicsSpiceZlibCompressionTypeToString;
+virDomainGraphicsTypeFromString;
+virDomainGraphicsTypeToString;
+virDomainHostdevDefAlloc;
+virDomainHostdevDefClear;
+virDomainHostdevDefFree;
+virDomainHostdevFind;
+virDomainHostdevInsert;
+virDomainHostdevModeTypeToString;
+virDomainHostdevRemove;
+virDomainHostdevSubsysTypeToString;
+virDomainHubTypeFromString;
+virDomainHubTypeToString;
+virDomainInputDefFree;
+virDomainIoEventFdTypeFromString;
+virDomainIoEventFdTypeToString;
+virDomainLeaseDefFree;
+virDomainLeaseIndex;
+virDomainLeaseInsert;
+virDomainLeaseInsertPreAlloc;
+virDomainLeaseInsertPreAlloced;
+virDomainLeaseRemove;
+virDomainLeaseRemoveAt;
+virDomainLifecycleCrashTypeFromString;
+virDomainLifecycleCrashTypeToString;
+virDomainLifecycleTypeFromString;
+virDomainLifecycleTypeToString;
+virDomainLiveConfigHelperMethod;
+virDomainLoadAllConfigs;
+virDomainMemballoonModelTypeFromString;
+virDomainMemballoonModelTypeToString;
+virDomainNetDefFree;
+virDomainNetFind;
+virDomainNetGetActualBandwidth;
+virDomainNetGetActualBridgeName;
+virDomainNetGetActualBridgeType;
+virDomainNetGetActualDirectDev;
+virDomainNetGetActualDirectMode;
+virDomainNetGetActualHostdev;
+virDomainNetGetActualType;
+virDomainNetGetActualVirtPortProfile;
+virDomainNetIndexByMac;
+virDomainNetInsert;
+virDomainNetRemove;
+virDomainNetRemoveByMac;
+virDomainNetTypeToString;
+virDomainNostateReasonTypeFromString;
+virDomainNostateReasonTypeToString;
+virDomainNumatuneMemModeTypeFromString;
+virDomainNumatuneMemModeTypeToString;
+virDomainObjAssignDef;
+virDomainObjCopyPersistentDef;
+virDomainObjGetPersistentDef;
+virDomainObjGetState;
+virDomainObjIsDuplicate;
+virDomainObjListDeinit;
+virDomainObjListGetActiveIDs;
+virDomainObjListGetInactiveNames;
+virDomainObjListInit;
+virDomainObjListNumOfDomains;
+virDomainObjLock;
+virDomainObjRef;
+virDomainObjSetDefTransient;
+virDomainObjSetState;
+virDomainObjTaint;
+virDomainObjUnlock;
+virDomainObjUnref;
+virDomainPausedReasonTypeFromString;
+virDomainPausedReasonTypeToString;
+virDomainPciRombarModeTypeFromString;
+virDomainPciRombarModeTypeToString;
+virDomainRedirdevBusTypeFromString;
+virDomainRedirdevBusTypeToString;
+virDomainRemoveInactive;
+virDomainRunningReasonTypeFromString;
+virDomainRunningReasonTypeToString;
+virDomainSaveConfig;
+virDomainSaveStatus;
+virDomainSaveXML;
+virDomainShutdownReasonTypeFromString;
+virDomainShutdownReasonTypeToString;
+virDomainShutoffReasonTypeFromString;
+virDomainShutoffReasonTypeToString;
+virDomainSmartcardDefForeach;
+virDomainSmartcardDefFree;
+virDomainSmartcardTypeFromString;
+virDomainSmartcardTypeToString;
+virDomainSnapshotAlignDisks;
+virDomainSnapshotAssignDef;
+virDomainSnapshotDefFormat;
+virDomainSnapshotDefFree;
+virDomainSnapshotDefParseString;
+virDomainSnapshotDropParent;
+virDomainSnapshotFindByName;
+virDomainSnapshotForEachChild;
+virDomainSnapshotForEachDescendant;
+virDomainSnapshotObjListGetNames;
+virDomainSnapshotObjListGetNamesFrom;
+virDomainSnapshotObjListNum;
+virDomainSnapshotObjListNumFrom;
+virDomainSnapshotObjListRemove;
+virDomainSnapshotStateTypeFromString;
+virDomainSnapshotStateTypeToString;
+virDomainSnapshotUpdateRelations;
+virDomainSoundDefFree;
+virDomainSoundModelTypeFromString;
+virDomainSoundModelTypeToString;
+virDomainStartupPolicyTypeFromString;
+virDomainStartupPolicyTypeToString;
+virDomainStateReasonFromString;
+virDomainStateReasonToString;
+virDomainStateTypeFromString;
+virDomainStateTypeToString;
+virDomainTaintTypeFromString;
+virDomainTaintTypeToString;
+virDomainTimerModeTypeFromString;
+virDomainTimerModeTypeToString;
+virDomainTimerNameTypeFromString;
+virDomainTimerNameTypeToString;
+virDomainTimerTickpolicyTypeFromString;
+virDomainTimerTickpolicyTypeToString;
+virDomainTimerTrackTypeFromString;
+virDomainTimerTrackTypeToString;
+virDomainVcpuPinAdd;
+virDomainVcpuPinDel;
+virDomainVcpuPinFindByVcpu;
+virDomainVcpuPinIsDuplicate;
+virDomainVideoDefFree;
+virDomainVideoDefaultRAM;
+virDomainVideoDefaultType;
+virDomainVideoTypeFromString;
+virDomainVideoTypeToString;
+virDomainVirtTypeToString;
+virDomainVirtioEventIdxTypeFromString;
+virDomainVirtioEventIdxTypeToString;
+virDomainWatchdogActionTypeFromString;
+virDomainWatchdogActionTypeToString;
+virDomainWatchdogModelTypeFromString;
+virDomainWatchdogModelTypeToString;
+
+
+# domain_event.h
+virDomainEventBlockJobNewFromObj;
+virDomainEventBlockJobNewFromDom;
+virDomainEventControlErrorNewFromDom;
+virDomainEventControlErrorNewFromObj;
+virDomainEventDiskChangeNewFromDom;
+virDomainEventDiskChangeNewFromObj;
+virDomainEventFree;
+virDomainEventGraphicsNewFromDom;
+virDomainEventGraphicsNewFromObj;
+virDomainEventIOErrorNewFromDom;
+virDomainEventIOErrorNewFromObj;
+virDomainEventIOErrorReasonNewFromDom;
+virDomainEventIOErrorReasonNewFromObj;
+virDomainEventNew;
+virDomainEventNewFromDef;
+virDomainEventNewFromDom;
+virDomainEventNewFromObj;
+virDomainEventPMSuspendNewFromDom;
+virDomainEventPMSuspendNewFromObj;
+virDomainEventPMWakeupNewFromDom;
+virDomainEventPMWakeupNewFromObj;
+virDomainEventRTCChangeNewFromDom;
+virDomainEventRTCChangeNewFromObj;
+virDomainEventRebootNew;
+virDomainEventRebootNewFromDom;
+virDomainEventRebootNewFromObj;
+virDomainEventStateDeregister;
+virDomainEventStateDeregisterID;
+virDomainEventStateDeregisterConn;
+virDomainEventStateEventID;
+virDomainEventStateRegister;
+virDomainEventStateRegisterID;
+virDomainEventStateFree;
+virDomainEventStateNew;
+virDomainEventStateQueue;
+virDomainEventTrayChangeNewFromDom;
+virDomainEventTrayChangeNewFromObj;
+virDomainEventWatchdogNewFromDom;
+virDomainEventWatchdogNewFromObj;
+
+
+# domain_lock.h
+virDomainLockProcessStart;
+virDomainLockProcessInquire;
+virDomainLockProcessPause;
+virDomainLockProcessResume;
+virDomainLockDiskAttach;
+virDomainLockDiskDetach;
+virDomainLockLeaseAttach;
+virDomainLockLeaseDetach;
+
+
+# domain_nwfilter.h
+virDomainConfNWFilterInstantiate;
+virDomainConfNWFilterRegister;
+virDomainConfNWFilterTeardown;
+virDomainConfVMNWFilterTeardown;
+
+
+# ebtables.h
+ebtablesAddForwardAllowIn;
+ebtablesAddForwardPolicyReject;
+ebtablesContextFree;
+ebtablesContextNew;
+ebtablesRemoveForwardAllowIn;
+
+
+# event_poll.h
+virEventPollToNativeEvents;
+virEventPollFromNativeEvents;
+
+
+# fdstream.h
+virFDStreamOpen;
+virFDStreamConnectUNIX;
+virFDStreamOpenFile;
+virFDStreamCreateFile;
+
+
+# hash.h
+virHashAddEntry;
+virHashCreate;
+virHashForEach;
+virHashFree;
+virHashGetItems;
+virHashLookup;
+virHashRemoveEntry;
+virHashRemoveSet;
+virHashSearch;
+virHashSize;
+virHashSteal;
+virHashTableSize;
+virHashUpdateEntry;
+
+
+# hooks.h
+virHookCall;
+virHookInitialize;
+virHookPresent;
+
+
+# interface_conf.h
+virInterfaceAssignDef;
+virInterfaceDefFormat;
+virInterfaceDefFree;
+virInterfaceDefParseFile;
+virInterfaceDefParseNode;
+virInterfaceDefParseString;
+virInterfaceFindByMACString;
+virInterfaceFindByName;
+virInterfaceObjListClone;
+virInterfaceObjListFree;
+virInterfaceObjLock;
+virInterfaceObjUnlock;
+virInterfaceRemove;
+
+
+# iptables.h
+iptablesAddForwardAllowCross;
+iptablesAddForwardAllowIn;
+iptablesAddForwardAllowOut;
+iptablesAddForwardAllowRelatedIn;
+iptablesAddForwardMasquerade;
+iptablesAddForwardRejectIn;
+iptablesAddForwardRejectOut;
+iptablesAddOutputFixUdpChecksum;
+iptablesAddTcpInput;
+iptablesAddUdpInput;
+iptablesContextFree;
+iptablesContextNew;
+iptablesRemoveForwardAllowCross;
+iptablesRemoveForwardAllowIn;
+iptablesRemoveForwardAllowOut;
+iptablesRemoveForwardAllowRelatedIn;
+iptablesRemoveForwardMasquerade;
+iptablesRemoveForwardRejectIn;
+iptablesRemoveForwardRejectOut;
+iptablesRemoveOutputFixUdpChecksum;
+iptablesRemoveTcpInput;
+iptablesRemoveUdpInput;
+
+
+# json.h
+virJSONValueArrayAppend;
+virJSONValueArrayGet;
+virJSONValueArraySize;
+virJSONValueFree;
+virJSONValueFromString;
+virJSONValueGetBoolean;
+virJSONValueGetNumberDouble;
+virJSONValueGetNumberInt;
+virJSONValueGetNumberLong;
+virJSONValueGetNumberUint;
+virJSONValueGetNumberUlong;
+virJSONValueGetString;
+virJSONValueIsNull;
+virJSONValueNewArray;
+virJSONValueNewBoolean;
+virJSONValueNewNull;
+virJSONValueNewNumberDouble;
+virJSONValueNewNumberInt;
+virJSONValueNewNumberLong;
+virJSONValueNewNumberUint;
+virJSONValueNewNumberUlong;
+virJSONValueNewObject;
+virJSONValueNewString;
+virJSONValueNewStringLen;
+virJSONValueObjectAppend;
+virJSONValueObjectAppendBoolean;
+virJSONValueObjectAppendNull;
+virJSONValueObjectAppendNumberDouble;
+virJSONValueObjectAppendNumberInt;
+virJSONValueObjectAppendNumberLong;
+virJSONValueObjectAppendNumberUint;
+virJSONValueObjectAppendNumberUlong;
+virJSONValueObjectAppendString;
+virJSONValueObjectGet;
+virJSONValueObjectGetBoolean;
+virJSONValueObjectGetNumberDouble;
+virJSONValueObjectGetNumberInt;
+virJSONValueObjectGetNumberLong;
+virJSONValueObjectGetNumberUint;
+virJSONValueObjectGetNumberUlong;
+virJSONValueObjectGetString;
+virJSONValueObjectHasKey;
+virJSONValueObjectIsNull;
+virJSONValueToString;
+
+
+# libvirt_internal.h
+virDomainMigrateFinish2;
+virDomainMigrateFinish;
+virDomainMigratePerform;
+virDomainMigratePrepare2;
+virDomainMigratePrepare;
+virDomainMigratePrepareTunnel;
+virDomainMigrateBegin3;
+virDomainMigratePrepare3;
+virDomainMigratePrepareTunnel3;
+virDomainMigratePerform3;
+virDomainMigrateFinish3;
+virDomainMigrateConfirm3;
+virDrvSupportsFeature;
+virRegisterDeviceMonitor;
+virRegisterDriver;
+virRegisterInterfaceDriver;
+virRegisterNWFilterDriver;
+virRegisterNetworkDriver;
+virRegisterSecretDriver;
+virRegisterStorageDriver;
+
+
+# locking.h
+virLockManagerAcquire;
+virLockManagerAddResource;
+virLockManagerFree;
+virLockManagerInquire;
+virLockManagerNew;
+virLockManagerPluginNew;
+virLockManagerPluginRef;
+virLockManagerPluginUnref;
+virLockManagerPluginUsesState;
+virLockManagerPluginGetName;
+virLockManagerRelease;
+
+
+# logging.h
+virLogDefineFilter;
+virLogDefineOutput;
+virLogEmergencyDumpAll;
+virLogGetDefaultPriority;
+virLogGetFilters;
+virLogGetNbFilters;
+virLogGetNbOutputs;
+virLogGetOutputs;
+virLogLock;
+virLogMessage;
+virLogParseDefaultPriority;
+virLogParseFilters;
+virLogParseOutputs;
+virLogReset;
+virLogSetBufferSize;
+virLogSetDefaultPriority;
+virLogSetFromEnv;
+virLogShutdown;
+virLogStartup;
+virLogUnlock;
+
+
+# memory.h
+virAlloc;
+virAllocN;
+virAllocVar;
+virExpandN;
+virFree;
+virReallocN;
+virResizeN;
+virShrinkN;
+
+
+# netdev_bandwidth_conf.h
+virNetDevBandwidthFormat;
+virNetDevBandwidthParse;
+
+
+# netdev_vportprofile_conf.h
+virNetDevVPortProfileFormat;
+virNetDevVPortProfileParse;
+virNetDevVPortTypeFromString;
+virNetDevVPortTypeToString;
+
+
+# network_conf.h
+virNetworkAssignDef;
+virNetworkConfigFile;
+virNetworkDefFormat;
+virNetworkDefFree;
+virNetworkDefGetIpByIndex;
+virNetworkDefParseFile;
+virNetworkDefParseNode;
+virNetworkDefParseString;
+virNetworkDeleteConfig;
+virNetworkFindByName;
+virNetworkFindByUUID;
+virNetworkIpDefNetmask;
+virNetworkIpDefPrefix;
+virNetworkLoadAllConfigs;
+virNetworkObjIsDuplicate;
+virNetworkObjListFree;
+virNetworkObjLock;
+virNetworkObjUnlock;
+virNetworkRemoveInactive;
+virNetworkSaveConfig;
+virNetworkSetBridgeMacAddr;
+virNetworkSetBridgeName;
+virPortGroupFindByName;
+
+
+# node_device_conf.h
+virNodeDevCapTypeToString;
+virNodeDevCapsDefFree;
+virNodeDeviceAssignDef;
+virNodeDeviceDefFormat;
+virNodeDeviceDefFree;
+virNodeDeviceDefParseFile;
+virNodeDeviceDefParseNode;
+virNodeDeviceDefParseString;
+virNodeDeviceFindByName;
+virNodeDeviceFindBySysfsPath;
+virNodeDeviceGetParentHost;
+virNodeDeviceGetWWNs;
+virNodeDeviceHasCap;
+virNodeDeviceObjListFree;
+virNodeDeviceObjLock;
+virNodeDeviceObjRemove;
+virNodeDeviceObjUnlock;
+
+
+# nodeinfo.h
+nodeCapsInitNUMA;
+nodeGetCPUmap;
+nodeGetCPUStats;
+nodeGetCellsFreeMemory;
+nodeGetFreeMemory;
+nodeGetInfo;
+nodeGetMemoryStats;
+
+
+# nwfilter_conf.h
+virNWFilterCallbackDriversLock;
+virNWFilterCallbackDriversUnlock;
+virNWFilterChainSuffixTypeToString;
+virNWFilterConfLayerInit;
+virNWFilterConfLayerShutdown;
+virNWFilterDefFormat;
+virNWFilterDefFree;
+virNWFilterDefParseString;
+virNWFilterInstFiltersOnAllVMs;
+virNWFilterJumpTargetTypeToString;
+virNWFilterLoadAllConfigs;
+virNWFilterLockFilterUpdates;
+virNWFilterObjAssignDef;
+virNWFilterObjDeleteDef;
+virNWFilterObjFindByName;
+virNWFilterObjFindByUUID;
+virNWFilterObjListFree;
+virNWFilterObjLock;
+virNWFilterObjRemove;
+virNWFilterObjSaveDef;
+virNWFilterObjUnlock;
+virNWFilterPrintStateMatchFlags;
+virNWFilterPrintTCPFlags;
+virNWFilterRegisterCallbackDriver;
+virNWFilterRuleActionTypeToString;
+virNWFilterRuleDirectionTypeToString;
+virNWFilterRuleProtocolTypeToString;
+virNWFilterTestUnassignDef;
+virNWFilterUnlockFilterUpdates;
+
+
+# nwfilter_params.h
+virNWFilterHashTableCreate;
+virNWFilterHashTableFree;
+virNWFilterHashTablePut;
+virNWFilterHashTablePutAll;
+virNWFilterHashTableRemoveEntry;
+virNWFilterVarAccessGetVarName;
+virNWFilterVarAccessIsAvailable;
+virNWFilterVarAccessPrint;
+virNWFilterVarCombIterCreate;
+virNWFilterVarCombIterFree;
+virNWFilterVarCombIterGetVarValue;
+virNWFilterVarCombIterNext;
+virNWFilterVarValueAddValue;
+virNWFilterVarValueCopy;
+virNWFilterVarValueCreateSimple;
+virNWFilterVarValueCreateSimpleCopyValue;
+virNWFilterVarValueDelValue;
+virNWFilterVarValueFree;
+virNWFilterVarValueGetCardinality;
+virNWFilterVarValueGetNthValue;
+virNWFilterVarValueGetSimple;
+
+
+# pci.h
+pciConfigAddressToSysfsFile;
+pciDettachDevice;
+pciDeviceFileIterate;
+pciDeviceGetManaged;
+pciDeviceGetName;
+pciDeviceGetRemoveSlot;
+pciDeviceGetReprobe;
+pciDeviceGetUnbindFromStub;
+pciDeviceGetUsedBy;
+pciDeviceGetVirtualFunctionInfo;
+pciDeviceIsAssignable;
+pciDeviceIsVirtualFunction;
+pciDeviceListAdd;
+pciDeviceListCount;
+pciDeviceListDel;
+pciDeviceListFind;
+pciDeviceListFree;
+pciDeviceListGet;
+pciDeviceListNew;
+pciDeviceListSteal;
+pciDeviceNetName;
+pciDeviceReAttachInit;
+pciDeviceSetManaged;
+pciDeviceSetRemoveSlot;
+pciDeviceSetReprobe;
+pciDeviceSetUnbindFromStub;
+pciDeviceSetUsedBy;
+pciFreeDevice;
+pciGetDevice;
+pciGetPhysicalFunction;
+pciGetVirtualFunctionIndex;
+pciGetVirtualFunctions;
+pciReAttachDevice;
+pciResetDevice;
+pciWaitForDeviceCleanup;
+
+
+# processinfo.h
+virProcessInfoGetAffinity;
+virProcessInfoSetAffinity;
+
+
+# secret_conf.h
+virSecretDefFormat;
+virSecretDefFree;
+virSecretDefParseFile;
+virSecretDefParseString;
+virSecretUsageTypeTypeFromString;
+virSecretUsageTypeTypeToString;
+
+
+# security_driver.h
+virSecurityDriverLookup;
+
+
+# security_manager.h
+virSecurityManagerClearSocketLabel;
+virSecurityManagerFree;
+virSecurityManagerGenLabel;
+virSecurityManagerGetDOI;
+virSecurityManagerGetModel;
+virSecurityManagerGetProcessLabel;
+virSecurityManagerNew;
+virSecurityManagerNewStack;
+virSecurityManagerNewDAC;
+virSecurityManagerReleaseLabel;
+virSecurityManagerReserveLabel;
+virSecurityManagerRestoreImageLabel;
+virSecurityManagerRestoreAllLabel;
+virSecurityManagerRestoreHostdevLabel;
+virSecurityManagerRestoreSavedStateLabel;
+virSecurityManagerSetAllLabel;
+virSecurityManagerSetDaemonSocketLabel;
+virSecurityManagerSetImageFDLabel;
+virSecurityManagerSetImageLabel;
+virSecurityManagerSetHostdevLabel;
+virSecurityManagerSetProcessLabel;
+virSecurityManagerSetSavedStateLabel;
+virSecurityManagerSetSocketLabel;
+virSecurityManagerVerify;
+
+# sexpr.h
+sexpr_append;
+sexpr_cons;
+sexpr_float;
+sexpr_fmt_node;
+sexpr_free;
+sexpr_has;
+sexpr_int;
+sexpr_lookup;
+sexpr_nil;
+sexpr_node;
+sexpr_node_copy;
+sexpr_string;
+sexpr_u64;
+sexpr2string;
+string2sexpr;
+
+# storage_conf.h
+virStoragePartedFsTypeTypeToString;
+virStoragePoolDefFormat;
+virStoragePoolDefFree;
+virStoragePoolDefParseFile;
+virStoragePoolDefParseNode;
+virStoragePoolDefParseSourceString;
+virStoragePoolDefParseString;
+virStoragePoolFormatDiskTypeToString;
+virStoragePoolFormatFileSystemNetTypeToString;
+virStoragePoolFormatFileSystemTypeToString;
+virStoragePoolLoadAllConfigs;
+virStoragePoolObjAssignDef;
+virStoragePoolObjClearVols;
+virStoragePoolObjDeleteDef;
+virStoragePoolObjFindByName;
+virStoragePoolObjFindByUUID;
+virStoragePoolObjIsDuplicate;
+virStoragePoolObjListFree;
+virStoragePoolObjLock;
+virStoragePoolObjRemove;
+virStoragePoolObjSaveDef;
+virStoragePoolObjUnlock;
+virStoragePoolSourceClear;
+virStoragePoolSourceFindDuplicate;
+virStoragePoolSourceFindDuplicateDevices;
+virStoragePoolSourceFree;
+virStoragePoolSourceListFormat;
+virStoragePoolSourceListNewSource;
+virStoragePoolTypeFromString;
+virStorageVolDefFindByKey;
+virStorageVolDefFindByName;
+virStorageVolDefFindByPath;
+virStorageVolDefFormat;
+virStorageVolDefFree;
+virStorageVolDefParseFile;
+virStorageVolDefParseNode;
+virStorageVolDefParseString;
+
+
+# storage_encryption_conf.h
+virStorageEncryptionFormat;
+virStorageEncryptionFree;
+virStorageEncryptionParseNode;
+virStorageGenerateQcowPassphrase;
+
+
+# storage_file.h
+virStorageFileFormatTypeFromString;
+virStorageFileFormatTypeToString;
+virStorageFileFreeMetadata;
+virStorageFileGetMetadata;
+virStorageFileGetMetadataFromFD;
+virStorageFileIsClusterFS;
+virStorageFileIsSharedFS;
+virStorageFileIsSharedFSType;
+virStorageFileProbeFormat;
+virStorageFileProbeFormatFromFD;
+virStorageFileResize;
+
+# sysinfo.h
+virSysinfoDefFree;
+virSysinfoFormat;
+virSysinfoRead;
+
+
+# threadpool.h
+virThreadPoolFree;
+virThreadPoolNew;
+virThreadPoolSendJob;
+
+
+# threads.h
+virCondBroadcast;
+virCondDestroy;
+virCondInit;
+virCondSignal;
+virCondWait;
+virCondWaitUntil;
+virMutexDestroy;
+virMutexInit;
+virMutexInitRecursive;
+virMutexLock;
+virMutexUnlock;
+virOnce;
+virThreadCreate;
+virThreadID;
+virThreadIsSelf;
+virThreadJoin;
+virThreadSelf;
+virThreadSelfID;
+
+
+# usb.h
+usbDeviceFileIterate;
+usbDeviceGetBus;
+usbDeviceGetDevno;
+usbDeviceGetName;
+usbDeviceGetUsedBy;
+usbDeviceListAdd;
+usbDeviceListCount;
+usbDeviceListDel;
+usbDeviceListFind;
+usbDeviceListFree;
+usbDeviceListGet;
+usbDeviceListNew;
+usbDeviceListSteal;
+usbDeviceSetUsedBy;
+usbFindDevice;
+usbFreeDevice;
+usbGetDevice;
+
+
+# util.h
+saferead;
+safewrite;
+safezero;
+virArgvToString;
+virAsprintf;
+virBuildPathInternal;
+virDirCreate;
+virEnumFromString;
+virEnumToString;
+virEventAddHandle;
+virEventRemoveHandle;
+virFileAbsPath;
+virFileAccessibleAs;
+virFileBuildPath;
+virFileExists;
+virFileFindMountPoint;
+virFileHasSuffix;
+virFileIsExecutable;
+virFileIsLink;
+virFileLinkPointsTo;
+virFileLock;
+virFileMakePath;
+virFileMatchesNameSuffix;
+virFileOpenAs;
+virFileOpenTty;
+virFileReadAll;
+virFileReadLimFD;
+virFileResolveAllLinks;
+virFileResolveLink;
+virFileSanitizePath;
+virFileStripSuffix;
+virFileUnlock;
+virFileWaitForDevices;
+virFileWriteStr;
+virFindFileInPath;
+virGetGroupID;
+virGetGroupName;
+virGetHostname;
+virGetUserDirectory;
+virGetUserID;
+virGetUserName;
+virHexToBin;
+virIndexToDiskName;
+virIsDevMapperDevice;
+virKillProcess;
+virParseNumber;
+virParseVersionString;
+virPipeReadUntilEOF;
+virScaleInteger;
+virSetBlocking;
+virSetCloseExec;
+virSetInherit;
+virSetNonBlock;
+virSetUIDGID;
+virSkipSpaces;
+virSkipSpacesAndBackslash;
+virSkipSpacesBackwards;
+virStrToDouble;
+virStrToLong_i;
+virStrToLong_l;
+virStrToLong_ll;
+virStrToLong_ui;
+virStrToLong_ul;
+virStrToLong_ull;
+virStrcpy;
+virStrncpy;
+virTrimSpaces;
+virVasprintf;
+
+
+# uuid.h
+virGetHostUUID;
+virSetHostUUIDStr;
+virUUIDFormat;
+virUUIDGenerate;
+virUUIDParse;
+
+
+# virauth.h
+virAuthGetConfigFilePath;
+virAuthGetPassword;
+virAuthGetUsername;
+
+
+# virauthconfig.h
+virAuthConfigFree;
+virAuthConfigLookup;
+virAuthConfigNew;
+virAuthConfigNewData;
+
+
+# viraudit.h
+virAuditClose;
+virAuditEncode;
+virAuditLog;
+virAuditOpen;
+virAuditSend;
+
+
+# virconsole.h
+virConsoleAlloc;
+virConsoleFree;
+virConsoleOpen;
+
+
+# virfile.h
+virFileClose;
+virFileDirectFdFlag;
+virFileWrapperFdClose;
+virFileWrapperFdFree;
+virFileWrapperFdNew;
+virFileFclose;
+virFileFdopen;
+virFileRewrite;
+virFileTouch;
+
+
+# virkeycode.h
+virKeycodeSetTypeFromString;
+virKeycodeSetTypeToString;
+virKeycodeValueFromString;
+virKeycodeValueTranslate;
+
+
+# virkeyfile.h
+virKeyFileNew;
+virKeyFileLoadFile;
+virKeyFileLoadData;
+virKeyFileFree;
+virKeyFileHasValue;
+virKeyFileHasGroup;
+virKeyFileGetValueString;
+
+
+# virmacaddr.h
+virMacAddrCompare;
+virMacAddrFormat;
+virMacAddrGenerate;
+virMacAddrIsMulticast;
+virMacAddrIsUnicast;
+virMacAddrParse;
+
+
+# virnetclient.h
+virNetClientHasPassFD;
+
+
+# virnetdev.h
+virNetDevClearIPv4Address;
+virNetDevExists;
+virNetDevGetIPv4Address;
+virNetDevGetIndex;
+virNetDevGetMAC;
+virNetDevGetMTU;
+virNetDevGetPhysicalFunction;
+virNetDevGetVLanID;
+virNetDevGetVirtualFunctionIndex;
+virNetDevGetVirtualFunctionInfo;
+virNetDevGetVirtualFunctions;
+virNetDevIsOnline;
+virNetDevIsVirtualFunction;
+virNetDevLinkDump;
+virNetDevReplaceMacAddress;
+virNetDevReplaceNetConfig;
+virNetDevRestoreMacAddress;
+virNetDevRestoreNetConfig;
+virNetDevSetIPv4Address;
+virNetDevSetMAC;
+virNetDevSetMTU;
+virNetDevSetMTUFromDevice;
+virNetDevSetName;
+virNetDevSetNamespace;
+virNetDevSetOnline;
+virNetDevValidateConfig;
+
+
+# virnetdevbandwidth.h
+virNetDevBandwidthClear;
+virNetDevBandwidthCopy;
+virNetDevBandwidthEqual;
+virNetDevBandwidthFree;
+virNetDevBandwidthSet;
+
+
+# virnetdevbridge.h
+virNetDevBridgeAddPort;
+virNetDevBridgeCreate;
+virNetDevBridgeDelete;
+virNetDevBridgeGetSTP;
+virNetDevBridgeGetSTPDelay;
+virNetDevBridgeRemovePort;
+virNetDevBridgeSetSTP;
+virNetDevBridgeSetSTPDelay;
+
+
+# virnetdevmacvlan.h
+virNetDevMacVLanCreate;
+virNetDevMacVLanDelete;
+virNetDevMacVLanCreateWithVPortProfile;
+virNetDevMacVLanDeleteWithVPortProfile;
+virNetDevMacVLanRestartWithVPortProfile;
+virNetDevMacVLanVPortProfileRegisterCallback;
+
+
+# virnetdevopenvswitch.h
+virNetDevOpenvswitchBridgeCreate;
+virNetDevOpenvswitchBridgeDelete;
+virNetDevOpenvswitchAddPort;
+virNetDevOpenvswitchRemovePort;
+virNetDevOpenvswitchBridgeSetSTPDelay;
+virNetDevOpenvswitchBridgeGetSTPDelay;
+virNetDevOpenvswitchBridgeSetSTP;
+virNetDevOpenvswitchBridgeGetSTP;
+
+
+# virnetdevtap.h
+virNetDevTapCreate;
+virNetDevTapCreateInBridgePort;
+virNetDevTapDelete;
+
+
+# virnetdevveth.h
+virNetDevVethCreate;
+virNetDevVethDelete;
+
+
+# virnetdevvportprofile.h
+virNetDevVPortProfileAssociate;
+virNetDevVPortProfileDisassociate;
+virNetDevVPortProfileEqual;
+virNetDevVPortProfileOpTypeFromString;
+virNetDevVPortProfileOpTypeToString;
+
+
+#virnetlink.h
+virNetlinkCommand;
+virNetlinkEventAddClient;
+virNetlinkEventRemoveClient;
+virNetlinkEventServiceIsRunning;
+virNetlinkEventServiceStop;
+virNetlinkEventServiceStart;
+
+
+# virnetmessage.h
+virNetMessageClear;
+virNetMessageDecodeNumFDs;
+virNetMessageDupFD;
+virNetMessageEncodeHeader;
+virNetMessageEncodePayload;
+virNetMessageEncodeNumFDs;
+virNetMessageFree;
+virNetMessageNew;
+virNetMessageQueuePush;
+virNetMessageQueueServe;
+virNetMessageSaveError;
+
+
+# virnetserver.h
+virNetServerAddProgram;
+virNetServerAddService;
+virNetServerAddSignalHandler;
+virNetServerAutoShutdown;
+virNetServerClose;
+virNetServerFree;
+virNetServerIsPrivileged;
+virNetServerKeepAliveRequired;
+virNetServerNew;
+virNetServerQuit;
+virNetServerRef;
+virNetServerRun;
+virNetServerServiceFree;
+virNetServerServiceNewTCP;
+virNetServerServiceNewUNIX;
+virNetServerUpdateServices;
+
+
+# virnetserverclient.h
+virNetServerClientAddFilter;
+virNetServerClientClose;
+virNetServerClientDelayedClose;
+virNetServerClientFree;
+virNetServerClientGetAuth;
+virNetServerClientGetFD;
+virNetServerClientGetPrivateData;
+virNetServerClientGetReadonly;
+virNetServerClientGetTLSKeySize;
+virNetServerClientGetUNIXIdentity;
+virNetServerClientHasTLSSession;
+virNetServerClientImmediateClose;
+virNetServerClientIsSecure;
+virNetServerClientLocalAddrString;
+virNetServerClientRef;
+virNetServerClientRemoteAddrString;
+virNetServerClientRemoveFilter;
+virNetServerClientSendMessage;
+virNetServerClientSetCloseHook;
+virNetServerClientSetIdentity;
+virNetServerClientSetPrivateData;
+virNetServerClientStartKeepAlive;
+
+
+# virnetserverprogram.h
+virNetServerProgramFree;
+virNetServerProgramGetID;
+virNetServerProgramGetVersion;
+virNetServerProgramMatches;
+virNetServerProgramNew;
+virNetServerProgramRef;
+virNetServerProgramSendReplyError;
+virNetServerProgramSendStreamData;
+virNetServerProgramSendStreamError;
+
+
+# virnetsocket.h
+virNetSocketDupFD;
+virNetSocketFree;
+virNetSocketGetFD;
+virNetSocketHasPassFD;
+virNetSocketIsLocal;
+virNetSocketListen;
+virNetSocketNewConnectTCP;
+virNetSocketNewListenUNIX;
+virNetSocketRecvFD;
+virNetSocketSendFD;
+
+
+# virnettlscontext.h
+virNetTLSContextFree;
+virNetTLSContextNewServer;
+virNetTLSContextNewServerPath;
+
+
+# virnodesuspend.h
+nodeSuspendForDuration;
+virNodeSuspendInit;
+virNodeSuspendGetTargetMask;
+
+
+# virpidfile.h
+virPidFileAcquire;
+virPidFileAcquirePath;
+virPidFileBuildPath;
+virPidFileRead;
+virPidFileReadIfAlive;
+virPidFileReadPath;
+virPidFileReadPathIfAlive;
+virPidFileRelease;
+virPidFileReleasePath;
+virPidFileWrite;
+virPidFileWritePath;
+virPidFileDelete;
+virPidFileDeletePath;
+
+
+# virrandom.h
+virRandomBits;
+virRandomGenerateWWN;
+virRandomInitialize;
+
+
+# virsocketaddr.h
+virSocketAddrBroadcast;
+virSocketAddrBroadcastByPrefix;
+virSocketAddrCheckNetmask;
+virSocketAddrFormat;
+virSocketAddrFormatFull;
+virSocketAddrGetPort;
+virSocketAddrGetRange;
+virSocketAddrIsNetmask;
+virSocketAddrMask;
+virSocketAddrMaskByPrefix;
+virSocketAddrParse;
+virSocketAddrParseIPv4;
+virSocketAddrParseIPv6;
+virSocketAddrPrefixToNetmask;
+virSocketAddrSetPort;
+
+
+# virterror_internal.h
+virDispatchError;
+virRaiseErrorFull;
+virReportErrorHelper;
+virReportOOMErrorFull;
+virReportSystemErrorFull;
+virSetError;
+virSetErrorLogPriorityFunc;
+virStrerror;
+
+
+# virtime.h
+virTimeFieldsNow;
+virTimeFieldsNowRaw;
+virTimeFieldsThen;
+virTimeFieldsThenRaw;
+virTimeMillisNow;
+virTimeMillisNowRaw;
+virTimeStringNow;
+virTimeStringNowRaw;
+virTimeStringThen;
+virTimeStringThenRaw;
+
+
+# virtypedparam.h
+virTypedParameterArrayClear;
+virTypedParameterArrayValidate;
+virTypedParameterAssign;
+
+
+# viruri.h
+virURIFormat;
+virURIFormatParams;
+virURIFree;
+virURIParse;
+
+
+# xml.h
+virXMLChildElementCount;
+virXMLParseHelper;
+virXMLPropString;
+virXMLSaveFile;
+virXPathBoolean;
+virXPathInt;
+virXPathLong;
+virXPathLongHex;
+virXPathLongLong;
+virXPathNode;
+virXPathNodeSet;
+virXPathNumber;
+virXPathString;
+virXPathStringLimit;
+virXPathUInt;
+virXPathULong;
+virXPathULongHex;
+virXPathULongLong;
+#
+# Linux-specific private symbols.
+#
+
+
+# stats_linux.h
+linuxDomainInterfaceStats;
+xenLinuxDomainBlockStats;
+
+# nodeinfo.h
+linuxNodeInfoCPUPopulate;
+#
+# These symbols are dependent upon --with-libvirtd via WITH_LIBVIRTD.
+#
+
+# libvirt_internal.h
+virStateInitialize;
+virStateCleanup;
+virStateReload;
+virStateActive;
+virRegisterStateDriver;
+#
+# These symbols are dependent on WITH_NWFILTER.
+#
+
+
+# nwfilter_gentech_driver.h
+virNWFilterInstantiateFilter;
+virNWFilterTeardownFilter;
+
+
+# nwfilter_learnipaddr.h
+virNWFilterGetIpAddrForIfname;
+virNWFilterDelIpAddrForIfname;
+virNWFilterLookupLearnReq;
+#
+# These symbols are dependent upon --with-esx via WITH_ESX or --with-vmware via WITH_VMWARE.
+#
+
+# vmx.h
+virVMXConvertToUTF8;
+virVMXEscapeHex;
+virVMXFormatCDROM;
+virVMXFormatConfig;
+virVMXFormatEthernet;
+virVMXFormatFloppy;
+virVMXFormatHardDisk;
+virVMXFormatParallel;
+virVMXFormatSerial;
+virVMXFormatVNC;
+virVMXParseConfig;
+virVMXParseDisk;
+virVMXParseEthernet;
+virVMXParseParallel;
+virVMXParseSCSIController;
+virVMXParseSerial;
+virVMXParseVNC;
+virVMXUnescapeHex;
+#
+# Network-specific symbols
+#
+
+# bridge_driver.h
+networkAllocateActualDevice;
+networkBuildDhcpDaemonCommandLine;
+networkGetNetworkAddress;
+networkNotifyActualDevice;
+networkReleaseActualDevice;
+#
+# SASL-specific symbols
+#
+
+# virnetsaslcontext.h
+virNetSASLContextCheckIdentity;
+virNetSASLContextNewServer;
+virNetSASLSessionExtKeySize;
+virNetSASLSessionFree;
+virNetSASLSessionGetIdentity;
+virNetSASLSessionGetKeySize;
+virNetSASLSessionListMechanisms;
+virNetSASLSessionNewServer;
+virNetSASLSessionSecProps;
+virNetSASLSessionServerStart;
+virNetSASLSessionServerStep;
+
+
+# virnetserverclient.h
+virNetServerClientSetSASLSession;
+
+
+local:
+*;
+
+};

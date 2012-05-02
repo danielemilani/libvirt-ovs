@@ -1,0 +1,95 @@
+From 65a2b6a03b3fbe1286d8bf8a0d69938fb21d94fa Mon Sep 17 00:00:00 2001
+From: root <root@daniele-Aspire-5920>
+Date: Wed, 18 Apr 2012 12:26:01 +0200
+Subject: [PATCH 2/6] added support for ovsport=null and vmuuid=null
+
+---
+ src/util/virnetdevopenvswitch.c |   65 ++++++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 32 deletions(-)
+
+diff --git a/src/util/virnetdevopenvswitch.c b/src/util/virnetdevopenvswitch.c
+index ef201f2..a53feb6 100644
+--- a/src/util/virnetdevopenvswitch.c
++++ b/src/util/virnetdevopenvswitch.c
+@@ -115,45 +115,46 @@ int virNetDevOpenvswitchAddPort(const char *brname, const char *ifname,
+     char *vmid_ex_id = NULL;
+ 
+     virMacAddrFormat(macaddr, macaddrstr);
+-    virUUIDFormat(ovsport->u.openvswitch.interfaceID, ifuuidstr);
+-    virUUIDFormat(vmuuid, vmuuidstr);
+-
+     if (virAsprintf(&attachedmac_ex_id, "external-ids:attached-mac=\"%s\"",
+                     macaddrstr) < 0)
+         goto out_of_memory;
+-    if (virAsprintf(&ifaceid_ex_id, "external-ids:iface-id=\"%s\"",
+-                    ifuuidstr) < 0)
+-        goto out_of_memory;
+-    if (virAsprintf(&vmid_ex_id, "external-ids:vm-id=\"%s\"",
+-                    vmuuidstr) < 0)
+-        goto out_of_memory;
+-    if (ovsport->u.openvswitch.profileID[0] != '\0') {
+-        if (virAsprintf(&profile_ex_id, "external-ids:port-profile=\"%s\"",
+-                        ovsport->u.openvswitch.profileID) < 0)
++    if (ovsport != NULL){
++        virUUIDFormat(ovsport->u.openvswitch.interfaceID, ifuuidstr);
++        if (virAsprintf(&ifaceid_ex_id, "external-ids:iface-id=\"%s\"",
++                        ifuuidstr) < 0)
+             goto out_of_memory;
++        if (ovsport->u.openvswitch.profileID[0] != '\0')
++            if (virAsprintf(&profile_ex_id, "external-ids:port-profile=\"%s\"",
++                            ovsport->u.openvswitch.profileID) < 0)
++                goto out_of_memory;
+     }
+-
+     cmd = virCommandNew(OVSVSCTL);
+-    if (ovsport->u.openvswitch.profileID[0] == '\0') {
+-        virCommandAddArgList(cmd, "--", "--may-exist", "add-port",
+-                        brname, ifname,
+-                        "--", "set", "Interface", ifname, attachedmac_ex_id,
+-                        "--", "set", "Interface", ifname, ifaceid_ex_id,
+-                        "--", "set", "Interface", ifname, vmid_ex_id,
+-                        "--", "set", "Interface", ifname,
+-                        "external-ids:iface-status=active",
+-                        NULL);
+-    } else {
+-        virCommandAddArgList(cmd, "--", "--may-exist", "add-port",
+-                        brname, ifname,
+-                        "--", "set", "Interface", ifname, attachedmac_ex_id,
+-                        "--", "set", "Interface", ifname, ifaceid_ex_id,
+-                        "--", "set", "Interface", ifname, vmid_ex_id,
+-                        "--", "set", "Interface", ifname, profile_ex_id,
+-                        "--", "set", "Interface", ifname,
+-                        "external-ids:iface-status=active",
+-                        NULL);
++    virCommandAddArgList(cmd, "--", "--may-exist", "add-port", brname,
++                         ifname, NULL);
++    virCommandAddArgList(cmd,
++                         "--", "set", "Interface", ifname, attachedmac_ex_id,
++                         NULL);
++    if (vmuuid != NULL) {
++        virUUIDFormat(vmuuid, vmuuidstr);
++        if (virAsprintf(&vmid_ex_id, "external-ids:vm-id=\"%s\"",
++                        vmuuidstr) < 0)
++            goto out_of_memory;
++        virCommandAddArgList(cmd,
++                             "--", "set", "Interface", ifname, vmid_ex_id,
++                             NULL);
++    }
++    if (ovsport != NULL){
++        virCommandAddArgList(cmd, "--", "set", "Interface", ifname,
++                             ifaceid_ex_id, NULL);
++        if (ovsport->u.openvswitch.profileID[0] != '\0') {
++            virCommandAddArgList(cmd,
++                                 "--", "set", "Interface", ifname,
++                                 profile_ex_id, NULL);
++        }
+     }
++    virCommandAddArgList(cmd, "--", "set", "Interface", ifname,
++                         "external-ids:iface-status=active",
++                         NULL);
+ 
+     if (virCommandRun(cmd, NULL) < 0) {
+         virReportSystemError(VIR_ERR_INTERNAL_ERROR,
+-- 
+1.7.9.5
+

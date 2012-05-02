@@ -1,0 +1,106 @@
+From 09bd64214dc70566f466fedc4bb535fed7de01b1 Mon Sep 17 00:00:00 2001
+From: root <root@daniele-Aspire-5920>
+Date: Thu, 26 Apr 2012 17:21:02 +0200
+Subject: [PATCH 5/6] added support for virtport copy
+
+---
+ src/conf/domain_conf.c      |    2 ++
+ src/conf/domain_conf.h      |    3 +++
+ src/network/bridge_driver.c |   32 ++++++++++++++++++++++++++++++--
+ 3 files changed, 35 insertions(+), 2 deletions(-)
+
+diff --git a/src/conf/domain_conf.c b/src/conf/domain_conf.c
+index 5092dbd..ebdf70e 100644
+--- a/src/conf/domain_conf.c
++++ b/src/conf/domain_conf.c
+@@ -14672,6 +14672,8 @@ virDomainNetGetActualVirtPortProfile(virDomainNetDefPtr iface)
+             return iface->data.network.actual->data.bridge.virtPortProfile;
+         case VIR_DOMAIN_NET_TYPE_HOSTDEV:
+             return iface->data.network.actual->data.hostdev.virtPortProfile;
++        case VIR_DOMAIN_NET_TYPE_NETWORK:
++            return iface->data.network.actual->data.network.virtPortProfile;
+         default:
+             return NULL;
+         }
+diff --git a/src/conf/domain_conf.h b/src/conf/domain_conf.h
+index f692211..7304634 100644
+--- a/src/conf/domain_conf.h
++++ b/src/conf/domain_conf.h
+@@ -758,6 +758,9 @@ struct _virDomainActualNetDef {
+             virDomainHostdevDef def;
+             virNetDevVPortProfilePtr virtPortProfile;
+         } hostdev;
++        struct {
++            virNetDevVPortProfilePtr virtPortProfile;
++        } network;
+     } data;
+     virNetDevBandwidthPtr bandwidth;
+ };
+diff --git a/src/network/bridge_driver.c b/src/network/bridge_driver.c
+index a855bbb..bc76fd9 100644
+--- a/src/network/bridge_driver.c
++++ b/src/network/bridge_driver.c
+@@ -2792,6 +2792,7 @@ networkAllocateActualDevice(virDomainNetDefPtr iface)
+     virNetworkObjPtr network;
+     virNetworkDefPtr netdef;
+     virPortGroupDefPtr portgroup;
++    virNetDevVPortProfilePtr virtport = NULL;
+     unsigned int num_virt_fns = 0;
+     char **vfname = NULL;
+     int ii;
+@@ -2837,6 +2838,14 @@ networkAllocateActualDevice(virDomainNetDefPtr iface)
+             goto cleanup;
+     }
+ 
++    if (portgroup && !iface->data.network.virtPortProfile) {
++        if (!iface->data.network.actual
++            && (VIR_ALLOC(iface->data.network.actual) < 0)) {
++            virReportOOMError();
++            goto cleanup;
++        }
++    }
++
+     if ((netdef->forwardType == VIR_NETWORK_FORWARD_NONE) ||
+         (netdef->forwardType == VIR_NETWORK_FORWARD_NAT) ||
+         (netdef->forwardType == VIR_NETWORK_FORWARD_ROUTE)) {
+@@ -2844,8 +2853,28 @@ networkAllocateActualDevice(virDomainNetDefPtr iface)
+          *NETWORK; we just keep the info from the portgroup in
+          * iface->data.network.actual
+         */
+-        if (iface->data.network.actual)
++        if (iface->data.network.actual) {
+             iface->data.network.actual->type = VIR_DOMAIN_NET_TYPE_NETWORK;
++            if (portgroup)
++                virtport = portgroup->virtPortProfile;
++            else
++                virtport = netdef->virtPortProfile;
++            if (virtport) {
++                if (VIR_ALLOC(iface->data.network.actual->data.network.virtPortProfile) < 0) {
++                    virReportOOMError();
++                    goto cleanup;
++                }
++                ignore_value(strncpy(iface->data.network.actual->data.network.virtPortProfile->u.openvswitch.vlanTag,
++                           virtport->u.openvswitch.vlanTag,
++                           LIBVIRT_IFLA_VF_VLAN_TAG_LENGTH_MAX));
++                if(virUUIDGenerate
++                   (iface->data.network.actual->data.network.virtPortProfile->u.openvswitch.interfaceID)){
++                    networkReportError(VIR_ERR_INTERNAL_ERROR,
++                                         "%s", _("Failed to generate UUID"));
++                    goto cleanup;
++                }
++            }
++        }
+     } else if ((netdef->forwardType == VIR_NETWORK_FORWARD_BRIDGE) &&
+                netdef->bridge) {
+ 
+@@ -2870,7 +2899,6 @@ networkAllocateActualDevice(virDomainNetDefPtr iface)
+                (netdef->forwardType == VIR_NETWORK_FORWARD_PRIVATE) ||
+                (netdef->forwardType == VIR_NETWORK_FORWARD_VEPA) ||
+                (netdef->forwardType == VIR_NETWORK_FORWARD_PASSTHROUGH)) {
+-        virNetDevVPortProfilePtr virtport = NULL;
+ 
+         /* <forward type='bridge|private|vepa|passthrough'> are all
+          * VIR_DOMAIN_NET_TYPE_DIRECT.
+-- 
+1.7.9.5
+

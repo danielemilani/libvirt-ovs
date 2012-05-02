@@ -1,0 +1,571 @@
+From 29ec6717252f2dc2fb18569d3267d3a7628e1f92 Mon Sep 17 00:00:00 2001
+From: root <root@daniele-Aspire-5920>
+Date: Wed, 18 Apr 2012 19:26:33 +0200
+Subject: [PATCH 4/6] added new bridge type openvswitch
+
+---
+ src/conf/domain_conf.c      |   44 ++++++++++++++++++++++---
+ src/conf/domain_conf.h      |    3 ++
+ src/conf/network_conf.c     |   10 ++++++
+ src/conf/network_conf.h     |    1 +
+ src/driver.h                |    3 ++
+ src/libvirt.c               |   36 +++++++++++++++++++++
+ src/libvirt_public.syms     |    5 +++
+ src/network/bridge_driver.c |   74 ++++++++++++++++++++++++++++++++++++-------
+ src/qemu/qemu_command.c     |   10 ++++--
+ src/uml/uml_conf.c          |   15 +++++----
+ src/util/virnetdevtap.c     |    5 +--
+ src/util/virnetdevtap.h     |    3 +-
+ 12 files changed, 181 insertions(+), 28 deletions(-)
+
+diff --git a/src/conf/domain_conf.c b/src/conf/domain_conf.c
+index 5ab052a..5092dbd 100644
+--- a/src/conf/domain_conf.c
++++ b/src/conf/domain_conf.c
+@@ -988,6 +988,7 @@ virDomainActualNetDefFree(virDomainActualNetDefPtr def)
+     switch (def->type) {
+     case VIR_DOMAIN_NET_TYPE_BRIDGE:
+         VIR_FREE(def->data.bridge.brname);
++        VIR_FREE(def->data.bridge.brtype);
+         VIR_FREE(def->data.bridge.virtPortProfile);
+         break;
+     case VIR_DOMAIN_NET_TYPE_DIRECT:
+@@ -4318,6 +4319,7 @@ virDomainNetDefParseXML(virCapsPtr caps,
+     char *network = NULL;
+     char *portgroup = NULL;
+     char *bridge = NULL;
++    char *bridge_type = NULL;
+     char *dev = NULL;
+     char *ifname = NULL;
+     char *script = NULL;
+@@ -4377,6 +4379,7 @@ virDomainNetDefParseXML(virCapsPtr caps,
+                        (def->type == VIR_DOMAIN_NET_TYPE_BRIDGE) &&
+                        (xmlStrEqual(cur->name, BAD_CAST "source"))) {
+                 bridge = virXMLPropString(cur, "bridge");
++                bridge_type = virXMLPropString(cur, "bridgetype");
+             } else if ((dev == NULL) &&
+                        (def->type == VIR_DOMAIN_NET_TYPE_ETHERNET ||
+                         def->type == VIR_DOMAIN_NET_TYPE_DIRECT) &&
+@@ -4492,8 +4495,8 @@ virDomainNetDefParseXML(virCapsPtr caps,
+         virDomainReportError(VIR_ERR_INTERNAL_ERROR, "%s",
+                              _("Network interfaces must use 'pci' address type"));
+         goto error;
+-    }
+ 
++    }
+     switch (def->type) {
+     case VIR_DOMAIN_NET_TYPE_NETWORK:
+         if (network == NULL) {
+@@ -4530,6 +4533,9 @@ virDomainNetDefParseXML(virCapsPtr caps,
+         }
+         def->data.bridge.brname = bridge;
+         bridge = NULL;
++        if (bridge_type != NULL)
++            def->data.bridge.brtype = bridge_type;
++        bridge_type = NULL;
+         if (address != NULL) {
+             def->data.bridge.ipaddr = address;
+             address = NULL;
+@@ -4751,6 +4757,7 @@ cleanup:
+     virDomainActualNetDefFree(actual);
+     VIR_FREE(script);
+     VIR_FREE(bridge);
++    VIR_FREE(bridge_type);
+     VIR_FREE(model);
+     VIR_FREE(backend);
+     VIR_FREE(txmode);
+@@ -11142,8 +11149,15 @@ virDomainActualNetDefFormat(virBufferPtr buf,
+ 
+     switch (def->type) {
+     case VIR_DOMAIN_NET_TYPE_BRIDGE:
+-        virBufferEscapeString(buf, "        <source bridge='%s'/>\n",
+-                              def->data.bridge.brname);
++        virBufferAsprintf(buf, "        <source bridge='%s'",
++                          def->data.bridge.brname);
++        if (def->data.bridge.brtype != NULL){
++            virBufferAddLit(buf, " bridgetype='");
++            virBufferAdd(buf, def->data.bridge.brtype,
++                         strlen(def->data.bridge.brtype));
++            virBufferAddLit(buf, "'");
++        }
++        virBufferAddLit(buf, "/>\n");
+         if (def->data.bridge.virtPortProfile) {
+             virBufferAdjustIndent(buf, 6);
+             if (virNetDevVPortProfileFormat(def->data.bridge.virtPortProfile, buf) < 0)
+@@ -11255,8 +11269,16 @@ virDomainNetDefFormat(virBufferPtr buf,
+         break;
+ 
+     case VIR_DOMAIN_NET_TYPE_BRIDGE:
+-        virBufferEscapeString(buf, "      <source bridge='%s'/>\n",
+-                              def->data.bridge.brname);
++        virBufferAsprintf(buf, "      <source bridge='%s'",
++                          def->data.bridge.brname);
++        if (def->data.bridge.brtype != NULL){
++            virBufferAddLit(buf, " bridgetype='");
++            virBufferAdd(buf, def->data.bridge.brtype,
++                         strlen(def->data.bridge.brtype));
++            virBufferAddLit(buf, "'");
++        }
++        virBufferAddLit(buf, "/>\n");
++
+         if (def->data.bridge.ipaddr)
+             virBufferAsprintf(buf, "      <ip address='%s'/>\n",
+                               def->data.bridge.ipaddr);
+@@ -14583,6 +14605,18 @@ virDomainNetGetActualBridgeName(virDomainNetDefPtr iface)
+ }
+ 
+ const char *
++virDomainNetGetActualBridgeType(virDomainNetDefPtr iface)
++{
++    if (iface->type == VIR_DOMAIN_NET_TYPE_BRIDGE)
++        return iface->data.bridge.brtype;
++    if (iface->type != VIR_DOMAIN_NET_TYPE_NETWORK)
++        return NULL;
++    if (!iface->data.network.actual)
++        return NULL;
++    return iface->data.network.actual->data.bridge.brtype;
++}
++
++const char *
+ virDomainNetGetActualDirectDev(virDomainNetDefPtr iface)
+ {
+     if (iface->type == VIR_DOMAIN_NET_TYPE_DIRECT)
+diff --git a/src/conf/domain_conf.h b/src/conf/domain_conf.h
+index 0eed60e..f692211 100644
+--- a/src/conf/domain_conf.h
++++ b/src/conf/domain_conf.h
+@@ -746,6 +746,7 @@ struct _virDomainActualNetDef {
+     union {
+         struct {
+             char *brname;
++            char *brtype;
+             virNetDevVPortProfilePtr virtPortProfile;
+         } bridge;
+         struct {
+@@ -799,6 +800,7 @@ struct _virDomainNetDef {
+         } network;
+         struct {
+             char *brname;
++            char *brtype;
+             char *ipaddr;
+             virNetDevVPortProfilePtr virtPortProfile;
+         } bridge;
+@@ -1984,6 +1986,7 @@ int virDomainGraphicsListenSetNetwork(virDomainGraphicsDefPtr def,
+ 
+ int virDomainNetGetActualType(virDomainNetDefPtr iface);
+ const char *virDomainNetGetActualBridgeName(virDomainNetDefPtr iface);
++const char *virDomainNetGetActualBridgeType(virDomainNetDefPtr iface);
+ const char *virDomainNetGetActualDirectDev(virDomainNetDefPtr iface);
+ int virDomainNetGetActualDirectMode(virDomainNetDefPtr iface);
+ virDomainHostdevDefPtr virDomainNetGetActualHostdev(virDomainNetDefPtr iface);
+diff --git a/src/conf/network_conf.c b/src/conf/network_conf.c
+index 17dc0d3..f34bcf3 100644
+--- a/src/conf/network_conf.c
++++ b/src/conf/network_conf.c
+@@ -985,6 +985,14 @@ virNetworkDefParseXML(xmlXPathContextPtr ctxt)
+ 
+     /* Parse bridge information */
+     def->bridge = virXPathString("string(./bridge[1]/@name)", ctxt);
++    def->bridge_type = virXPathString("string(./bridge[1]/@type)", ctxt);
++    if(def->bridge_type != NULL
++       && STRNEQ_NULLABLE(def->bridge_type,"openvswitch")
++       && STRNEQ_NULLABLE(def->bridge_type,"linuxbridge")){
++       virNetworkReportError(VIR_ERR_XML_ERROR,
++                             _("Unknown bridge type %s"),def->bridge_type);
++            goto error;
++    }
+     stp = virXPathString("string(./bridge[1]/@stp)", ctxt);
+ 
+     if (virXPathULong("string(./bridge[1]/@delay)", ctxt, &def->delay) < 0)
+@@ -1512,6 +1520,8 @@ char *virNetworkDefFormat(const virNetworkDefPtr def, unsigned int flags)
+         virBufferAddLit(&buf, "  <bridge");
+         if (def->bridge)
+             virBufferEscapeString(&buf, " name='%s'", def->bridge);
++        if (def->bridge_type)
++            virBufferEscapeString(&buf, " type='%s'", def->bridge_type);
+         virBufferAsprintf(&buf, " stp='%s' delay='%ld' />\n",
+                           def->stp ? "on" : "off",
+                           def->delay);
+diff --git a/src/conf/network_conf.h b/src/conf/network_conf.h
+index 4339a69..533de16 100644
+--- a/src/conf/network_conf.h
++++ b/src/conf/network_conf.h
+@@ -151,6 +151,7 @@ struct _virNetworkDef {
+     char *name;
+ 
+     char *bridge;       /* Name of bridge device */
++    char *bridge_type;  /* Type of bridge device */
+     char *domain;
+     unsigned long delay;   /* Bridge forward delay (ms) */
+     unsigned int stp :1; /* Spanning tree protocol */
+diff --git a/src/driver.h b/src/driver.h
+index 03d249b..92daf89 100644
+--- a/src/driver.h
++++ b/src/driver.h
+@@ -1051,6 +1051,8 @@ typedef char *
+                                          unsigned int flags);
+ typedef char *
+         (*virDrvNetworkGetBridgeName)	(virNetworkPtr network);
++typedef char *
++        (*virDrvNetworkGetBridgeType)	(virNetworkPtr network);
+ typedef int
+         (*virDrvNetworkGetAutostart)	(virNetworkPtr network,
+                                          int *autostart);
+@@ -1095,6 +1097,7 @@ struct _virNetworkDriver {
+         virDrvNetworkDestroy		networkDestroy;
+         virDrvNetworkGetXMLDesc		networkGetXMLDesc;
+         virDrvNetworkGetBridgeName	networkGetBridgeName;
++        virDrvNetworkGetBridgeType	networkGetBridgeType;
+         virDrvNetworkGetAutostart	networkGetAutostart;
+         virDrvNetworkSetAutostart	networkSetAutostart;
+         virDrvNetworkIsActive           networkIsActive;
+diff --git a/src/libvirt.c b/src/libvirt.c
+index 93ec817..7ca4cdf 100644
+--- a/src/libvirt.c
++++ b/src/libvirt.c
+@@ -10368,6 +10368,42 @@ error:
+ }
+ 
+ /**
++ * virNetworkGetBridgeType:
++ * @network: a network object
++ *
++ * Provides a bridge interface type to which a domain may connect
++ * a network interface in order to join the network.
++ *
++ * Returns a 0 terminated interface name, or NULL in case of error.
++ *         the caller must free() the returned value.
++ */
++char *
++virNetworkGetBridgeType(virNetworkPtr network)
++{
++    virConnectPtr conn;
++    VIR_DEBUG("network=%p", network);
++
++    virResetLastError();
++
++    if (!VIR_IS_CONNECTED_NETWORK(network)) {
++        virLibNetworkError(VIR_ERR_INVALID_NETWORK, __FUNCTION__);
++        virDispatchError(NULL);
++        return NULL;
++    }
++
++    conn = network->conn;
++
++    if (conn->networkDriver && conn->networkDriver->networkGetBridgeName) {
++        char *ret;
++        ret = conn->networkDriver->networkGetBridgeType (network);
++        return ret;
++    }
++
++    virLibConnError(VIR_ERR_NO_SUPPORT, __FUNCTION__);
++    return NULL;
++}
++
++/**
+  * virNetworkGetAutostart:
+  * @network: a network object
+  * @autostart: the value returned
+diff --git a/src/libvirt_public.syms b/src/libvirt_public.syms
+index 46c13fb..a2152e5 100644
+--- a/src/libvirt_public.syms
++++ b/src/libvirt_public.syms
+@@ -534,4 +534,9 @@ LIBVIRT_0.9.11 {
+         virDomainPMWakeup;
+ } LIBVIRT_0.9.10;
+ 
++LIBVIRT_0.9.12 {
++    global:
++        virNetworkGetBridgeType;
++} LIBVIRT_0.9.11;
++
+ # .... define new API here using predicted next version number ....
+diff --git a/src/network/bridge_driver.c b/src/network/bridge_driver.c
+index d82212f..a855bbb 100644
+--- a/src/network/bridge_driver.c
++++ b/src/network/bridge_driver.c
+@@ -61,6 +61,7 @@
+ #include "ignore-value.h"
+ #include "virnetdev.h"
+ #include "virnetdevbridge.h"
++#include "virnetdevopenvswitch.h"
+ #include "virnetdevtap.h"
+ 
+ #define NETWORK_PID_DIR LOCALSTATEDIR "/run/libvirt/network"
+@@ -1749,9 +1750,15 @@ networkStartNetworkVirtual(struct network_driver *driver,
+         return -1;
+ 
+     /* Create and configure the bridge device */
+-    if (virNetDevBridgeCreate(network->def->bridge) < 0)
+-        return -1;
+-
++    if (STREQ_NULLABLE(network->def->bridge_type,"openvswitch") ) {
++        if (virNetDevOpenvswitchBridgeCreate(network->def->bridge) < 0) {
++            return -1;
++        }
++    } else {
++        if (virNetDevBridgeCreate(network->def->bridge) < 0) {
++            return -1;
++        }
++    }
+     if (network->def->mac_specified) {
+         /* To set a mac for the bridge, we need to define a dummy tap
+          * device, set its mac, then attach it to the bridge. As long
+@@ -1765,22 +1772,37 @@ networkStartNetworkVirtual(struct network_driver *driver,
+             goto err0;
+         }
+         if (virNetDevTapCreateInBridgePort(network->def->bridge,
+-                                           &macTapIfName, network->def->mac,
+-                                           NULL, NULL, NULL,
+-                                           VIR_NETDEV_TAP_CREATE_USE_MAC_FOR_BRIDGE) < 0) {
++                                           network->def->bridge_type,
++                                           &macTapIfName,
++                                           network->def->mac, NULL, NULL, NULL,
++                                           VIR_NETDEV_TAP_CREATE_USE_MAC_FOR_BRIDGE)
++                                           < 0) {
+             VIR_FREE(macTapIfName);
+             goto err0;
+         }
+     }
+ 
+     /* Set bridge options */
+-    if (virNetDevBridgeSetSTPDelay(network->def->bridge,
++    if (STREQ_NULLABLE(network->def->bridge_type,"openvswitch") ) {
++        if (virNetDevOpenvswitchBridgeSetSTPDelay(network->def->bridge,
+                           network->def->delay) < 0)
+-        goto err1;
++            goto err1;
++    } else {
++        if (virNetDevBridgeSetSTPDelay(network->def->bridge,
++                          network->def->delay) < 0)
++            goto err1;
++    }
+ 
+-    if (virNetDevBridgeSetSTP(network->def->bridge,
+-                              network->def->stp ? true : false) < 0)
+-        goto err1;
++    if (STREQ_NULLABLE(network->def->bridge_type,"openvswitch") ) {
++        if (virNetDevOpenvswitchBridgeSetSTP(network->def->bridge,
++                                             network->def->stp ? true : false)
++                                              < 0)
++            goto err1;
++    } else {
++        if (virNetDevBridgeSetSTP(network->def->bridge,
++                          network->def->stp ? true : false) < 0)
++            goto err1;
++    }
+ 
+     /* Disable IPv6 on the bridge if there are no IPv6 addresses
+      * defined, and set other IPv6 sysctl tunables appropriately.
+@@ -1916,7 +1938,11 @@ static int networkShutdownNetworkVirtual(struct network_driver *driver,
+ 
+     networkRemoveIptablesRules(driver, network);
+ 
+-    ignore_value(virNetDevBridgeDelete(network->def->bridge));
++    if (STREQ_NULLABLE(network->def->bridge_type,"openvswitch") ) {
++        ignore_value(virNetDevOpenvswitchBridgeDelete(network->def->bridge));
++    } else {
++        ignore_value(virNetDevBridgeDelete(network->def->bridge));
++    }
+ 
+     /* See if its still alive and really really kill it */
+     if (network->dnsmasqPid > 0 &&
+@@ -2586,6 +2612,29 @@ cleanup:
+     return bridge;
+ }
+ 
++static char *networkGetBridgeType(virNetworkPtr net) {
++    struct network_driver *driver = net->conn->networkPrivateData;
++    virNetworkObjPtr network;
++    char *bridgetype = NULL;
++
++    networkDriverLock(driver);
++    network = virNetworkFindByUUID(&driver->networks, net->uuid);
++    networkDriverUnlock(driver);
++
++    if (!network) {
++        networkReportError(VIR_ERR_NO_NETWORK,
++                           "%s", _("no network with matching id"));
++        goto cleanup;
++    }
++    if (network->def->bridge_type != NULL)
++        bridgetype = strdup(network->def->bridge_type);
++
++cleanup:
++    if (network)
++        virNetworkObjUnlock(network);
++    return bridgetype;
++}
++
+ static int networkGetAutostart(virNetworkPtr net,
+                              int *autostart) {
+     struct network_driver *driver = net->conn->networkPrivateData;
+@@ -2694,6 +2743,7 @@ static virNetworkDriver networkDriver = {
+     .networkDestroy = networkDestroy, /* 0.2.0 */
+     .networkGetXMLDesc = networkGetXMLDesc, /* 0.2.0 */
+     .networkGetBridgeName = networkGetBridgeName, /* 0.2.0 */
++    .networkGetBridgeType = networkGetBridgeType, /* 0.9.12 */
+     .networkGetAutostart = networkGetAutostart, /* 0.2.1 */
+     .networkSetAutostart = networkSetAutostart, /* 0.2.1 */
+     .networkIsActive = networkIsActive, /* 0.7.3 */
+diff --git a/src/qemu/qemu_command.c b/src/qemu/qemu_command.c
+index 8dedd80..ca152f5 100644
+--- a/src/qemu/qemu_command.c
++++ b/src/qemu/qemu_command.c
+@@ -176,6 +176,7 @@ qemuNetworkIfaceConnect(virDomainDefPtr def,
+                         virBitmapPtr qemuCaps)
+ {
+     char *brname = NULL;
++    char *brtype = NULL;
+     int err;
+     int tapfd = -1;
+     unsigned int tap_create_flags = VIR_NETDEV_TAP_CREATE_IFUP;
+@@ -204,6 +205,7 @@ qemuNetworkIfaceConnect(virDomainDefPtr def,
+             brname = virNetworkGetBridgeName(network);
+             if (brname == NULL)
+                 fail = 1;
++            brtype = virNetworkGetBridgeType(network);
+         }
+ 
+         /* Make sure any above failure is preserved */
+@@ -220,6 +222,9 @@ qemuNetworkIfaceConnect(virDomainDefPtr def,
+             virReportOOMError();
+             return -1;
+         }
++        if (virDomainNetGetActualBridgeType(net) != NULL) {
++            brtype = strdup(virDomainNetGetActualBridgeType(net));
++        }
+     } else {
+         qemuReportError(VIR_ERR_INTERNAL_ERROR,
+                         _("Network type %d is not supported"),
+@@ -244,8 +249,8 @@ qemuNetworkIfaceConnect(virDomainDefPtr def,
+         tap_create_flags |= VIR_NETDEV_TAP_CREATE_VNET_HDR;
+     }
+ 
+-    err = virNetDevTapCreateInBridgePort(brname, &net->ifname, net->mac,
+-                                         def->uuid, &tapfd,
++    err = virNetDevTapCreateInBridgePort(brname, brtype, &net->ifname,
++                                         net->mac, def->uuid, &tapfd,
+                                          virDomainNetGetActualVirtPortProfile(net),
+                                          tap_create_flags);
+     virDomainAuditNetDevice(def, net, "/dev/net/tun", tapfd >= 0);
+@@ -282,6 +287,7 @@ qemuNetworkIfaceConnect(virDomainDefPtr def,
+ 
+ cleanup:
+     VIR_FREE(brname);
++    VIR_FREE(brtype);
+ 
+     return tapfd;
+ }
+diff --git a/src/uml/uml_conf.c b/src/uml/uml_conf.c
+index 79b249d..703c4a5 100644
+--- a/src/uml/uml_conf.c
++++ b/src/uml/uml_conf.c
+@@ -124,7 +124,8 @@ static int
+ umlConnectTapDevice(virConnectPtr conn,
+                     virDomainDefPtr vm,
+                     virDomainNetDefPtr net,
+-                    const char *bridge)
++                    const char *bridge,
++                    const char *bridge_type)
+ {
+     bool template_ifname = false;
+ 
+@@ -138,8 +139,8 @@ umlConnectTapDevice(virConnectPtr conn,
+         template_ifname = true;
+     }
+ 
+-    if (virNetDevTapCreateInBridgePort(bridge, &net->ifname, net->mac,
+-                                       vm->uuid, NULL,
++    if (virNetDevTapCreateInBridgePort(bridge, bridge_type, &net->ifname,
++                                       net->mac, vm->uuid, NULL,
+                                        virDomainNetGetActualVirtPortProfile(net),
+                                        VIR_NETDEV_TAP_CREATE_IFUP) < 0) {
+         if (template_ifname)
+@@ -212,6 +213,7 @@ umlBuildCommandLineNet(virConnectPtr conn,
+     case VIR_DOMAIN_NET_TYPE_NETWORK:
+     {
+         char *bridge;
++        char *bridge_type;
+         virNetworkPtr network = virNetworkLookupByName(conn,
+                                                        def->data.network.name);
+         if (!network) {
+@@ -221,12 +223,13 @@ umlBuildCommandLineNet(virConnectPtr conn,
+             goto error;
+         }
+         bridge = virNetworkGetBridgeName(network);
++        bridge_type = virNetworkGetBridgeType(network);
+         virNetworkFree(network);
+         if (bridge == NULL) {
+             goto error;
+         }
+ 
+-        if (umlConnectTapDevice(conn, vm, def, bridge) < 0) {
++        if (umlConnectTapDevice(conn, vm, def, bridge, bridge_type) < 0) {
+             VIR_FREE(bridge);
+             goto error;
+         }
+@@ -237,8 +240,8 @@ umlBuildCommandLineNet(virConnectPtr conn,
+     }
+ 
+     case VIR_DOMAIN_NET_TYPE_BRIDGE:
+-        if (umlConnectTapDevice(conn, vm, def,
+-                                def->data.bridge.brname) < 0)
++        if (umlConnectTapDevice(conn, vm, def, def->data.bridge.brname,
++                                def->data.bridge.brtype) < 0)
+             goto error;
+ 
+         /* ethNNN=tuntap,tapname,macaddr,gateway */
+diff --git a/src/util/virnetdevtap.c b/src/util/virnetdevtap.c
+index 0b3ac46..9013bf4 100644
+--- a/src/util/virnetdevtap.c
++++ b/src/util/virnetdevtap.c
+@@ -279,6 +279,7 @@ int virNetDevTapDelete(const char *ifname ATTRIBUTE_UNUSED)
+  * Returns 0 in case of success or -1 on failure
+  */
+ int virNetDevTapCreateInBridgePort(const char *brname,
++                                   const char *brtype,
+                                    char **ifname,
+                                    const unsigned char *macaddr,
+                                    const unsigned char *vmuuid,
+@@ -325,7 +326,7 @@ int virNetDevTapCreateInBridgePort(const char *brname,
+     if (virNetDevSetMTUFromDevice(*ifname, brname) < 0)
+         goto error;
+ 
+-    if (virtPortProfile) {
++    if (STREQ_NULLABLE(brtype,"openvswitch")) {
+         if (virNetDevOpenvswitchAddPort(brname, *ifname, macaddr, vmuuid,
+                                         virtPortProfile) < 0) {
+             goto error;
+@@ -341,7 +342,7 @@ int virNetDevTapCreateInBridgePort(const char *brname,
+     return 0;
+ 
+  error:
+-    VIR_FORCE_CLOSE(*tapfd);
+ 
++    VIR_FORCE_CLOSE(*tapfd);
+     return errno;
+ }
+diff --git a/src/util/virnetdevtap.h b/src/util/virnetdevtap.h
+index d9a3593..e7a07e8 100644
+--- a/src/util/virnetdevtap.h
++++ b/src/util/virnetdevtap.h
+@@ -45,13 +45,14 @@ typedef enum {
+ } virNetDevTapCreateFlags;
+ 
+ int virNetDevTapCreateInBridgePort(const char *brname,
++                                   const char *brtype,
+                                    char **ifname,
+                                    const unsigned char *macaddr,
+                                    const unsigned char *vmuuid,
+                                    int *tapfd,
+                                    virNetDevVPortProfilePtr virtPortProfile,
+                                    unsigned int flags)
+-    ATTRIBUTE_NONNULL(1) ATTRIBUTE_NONNULL(2) ATTRIBUTE_NONNULL(3)
++    ATTRIBUTE_NONNULL(1) ATTRIBUTE_NONNULL(3) ATTRIBUTE_NONNULL(4)
+     ATTRIBUTE_RETURN_CHECK;
+ 
+ 
+-- 
+1.7.9.5
+

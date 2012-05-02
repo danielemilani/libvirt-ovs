@@ -1,0 +1,200 @@
+From b6f90571ea57cc1707a5196620348f4d67044d55 Mon Sep 17 00:00:00 2001
+From: root <root@daniele-Aspire-5920>
+Date: Mon, 16 Apr 2012 16:04:26 +0200
+Subject: [PATCH 1/6] Added Open vSwitch bridge support
+
+---
+ src/util/virnetdevopenvswitch.c |  137 +++++++++++++++++++++++++++++++++++++++
+ src/util/virnetdevopenvswitch.h |   19 ++++++
+ 2 files changed, 156 insertions(+)
+
+diff --git a/src/util/virnetdevopenvswitch.c b/src/util/virnetdevopenvswitch.c
+index 61bb9e1..ef201f2 100644
+--- a/src/util/virnetdevopenvswitch.c
++++ b/src/util/virnetdevopenvswitch.c
+@@ -32,6 +32,62 @@
+ #define VIR_FROM_THIS VIR_FROM_NONE
+ 
+ /**
++ * virNetDevOpenvswitchBridgeCreate:
++ * @brname: the bridge name
++ *
++ * This function register a new Open vSwitch bridge
++ *
++ * Returns 0 in case of success or -1 on failure
++ */
++int virNetDevOpenvswitchBridgeCreate(const char *brname)
++{
++    virCommandPtr cmd = NULL;
++    int ret = -1;
++
++    cmd = virCommandNew(OVSVSCTL);
++    virCommandAddArgList(cmd, "add-br", brname, NULL);
++    if (virCommandRun(cmd, NULL) < 0) {
++        virReportSystemError(VIR_ERR_INTERNAL_ERROR,
++                             _("Unable to add bridge %s"),
++                             brname);
++        goto cleanup;
++    }
++    ret = 0;
++
++cleanup:
++    virCommandFree(cmd);
++    return ret;
++}
++
++/**
++ * virNetDevBridgeDelete:
++ * @brname: the bridge name
++ *
++ * Remove an Open vSwitch bridge.
++ *
++ * Returns 0 in case of success or an errno code in case of failure.
++ */
++int virNetDevOpenvswitchBridgeDelete(const char *brname)
++{
++    virCommandPtr cmd = NULL;
++    int ret = -1;
++
++    cmd = virCommandNew(OVSVSCTL);
++    virCommandAddArgList(cmd, "del-br", brname, NULL);
++    if (virCommandRun(cmd, NULL) < 0) {
++        virReportSystemError(VIR_ERR_INTERNAL_ERROR,
++                             _("Unable to delete bridge %s"),
++                             brname);
++        goto cleanup;
++    }
++    ret = 0;
++
++cleanup:
++    virCommandFree(cmd);
++    return ret;
++}
++
++/**
+  * virNetDevOpenvswitchAddPort:
+  * @brname: the bridge name
+  * @ifname: the network interface name
+@@ -147,3 +203,84 @@ int virNetDevOpenvswitchRemovePort(const char *brname ATTRIBUTE_UNUSED, const ch
+         virCommandFree(cmd);
+         return ret;
+ }
++
++
++/**
++ * virNetDevOpenvswitchBridgeSetSTPDelay:
++ * @brname: the bridge name
++ * @delay: delay in seconds
++ *
++ * Set the bridge forward delay
++ *
++ * Returns 0 in case of success or -1 on failure
++ */
++int virNetDevOpenvswitchBridgeSetSTPDelay(const char *brname ATTRIBUTE_UNUSED,
++                                          int delay ATTRIBUTE_UNUSED)
++{
++    /* put anything here that needs to be done to set Bridge STP Delay.
++     * On failure, undo anything you've done, and return -1. On success
++     * return 0.
++     */
++     return 0;
++}
++
++/**
++ * virNetDevOpenvswitchBridgeGetSTPDelay:
++ * @brname: the bridge device name
++ * @delayms: the forward delay in milliseconds
++ *
++ * Retrives the forward delay for the bridge device @brname
++ * storing it in @delayms. The forward delay is only meaningful
++ * if STP is enabled
++ *
++ * Returns 0 on success, -1 on error
++ */
++int virNetDevOpenvswitchBridgeGetSTPDelay(const char *brname ATTRIBUTE_UNUSED,
++                                          int *delay ATTRIBUTE_UNUSED)
++{
++    /* put anything here that needs to be done to get Bridge STP Delay.
++     * On failure, undo anything you've done, and return -1. On success
++     * return 0.
++     */
++     return 0;
++}
++
++/**
++ * virNetDevBridgeSetSTP:
++ * @brname: the bridge name
++ * @enable: 1 to enable, 0 to disable
++ *
++ * Control whether the bridge participates in the spanning tree protocol,
++ * in general don't disable it without good reasons.
++ *
++ * Returns 0 in case of success or -1 on failure
++ */
++int virNetDevOpenvswitchBridgeSetSTP(const char *brname ATTRIBUTE_UNUSED,
++                                     bool enable ATTRIBUTE_UNUSED)
++{
++    /* put anything here that needs to be done to set Bridge STP.
++     * On failure, undo anything you've done, and return -1. On success
++     * return 0.
++     */
++     return 0;
++}
++
++/**
++ * virNetDevBridgeGetSTP:
++ * @brname: the bridge device name
++ * @enabled: returns the STP state
++ *
++ * Determine the state of the spanning tree protocol on
++ * the device @brname, returning the state in @enabled
++ *
++ * Returns 0 on success, -1 on error
++ */
++int virNetDevOpenvswitchBridgeGetSTP(const char *brname ATTRIBUTE_UNUSED,
++                                     bool *enable ATTRIBUTE_UNUSED)
++{
++    /* put anything here that needs to be done to get Bridge STP.
++     * On failure, undo anything you've done, and return -1. On success
++     * return 0.
++     */
++     return 0;
++}
+diff --git a/src/util/virnetdevopenvswitch.h b/src/util/virnetdevopenvswitch.h
+index 8141780..ee797d8 100644
+--- a/src/util/virnetdevopenvswitch.h
++++ b/src/util/virnetdevopenvswitch.h
+@@ -29,6 +29,11 @@
+ # include "virnetdevvportprofile.h"
+ 
+ 
++int virNetDevOpenvswitchBridgeCreate(const char *brname)
++    ATTRIBUTE_NONNULL(1) ATTRIBUTE_RETURN_CHECK;
++int virNetDevOpenvswitchBridgeDelete(const char *brname)
++    ATTRIBUTE_NONNULL(1) ATTRIBUTE_RETURN_CHECK;
++
+ int virNetDevOpenvswitchAddPort(const char *brname,
+                                 const char *ifname,
+                                 const unsigned char *macaddr,
+@@ -40,4 +45,18 @@ int virNetDevOpenvswitchAddPort(const char *brname,
+ int virNetDevOpenvswitchRemovePort(const char *brname, const char *ifname)
+     ATTRIBUTE_NONNULL(2) ATTRIBUTE_RETURN_CHECK;
+ 
++int virNetDevOpenvswitchBridgeSetSTPDelay(const char *brname,
++                                          int delay)
++    ATTRIBUTE_NONNULL(1) ATTRIBUTE_RETURN_CHECK;
++int virNetDevOpenvswitchBridgeGetSTPDelay(const char *brname,
++                                          int *delay)
++    ATTRIBUTE_NONNULL(1) ATTRIBUTE_NONNULL(2) ATTRIBUTE_RETURN_CHECK;
++int virNetDevOpenvswitchBridgeSetSTP(const char *brname,
++                                     bool enable)
++    ATTRIBUTE_NONNULL(1) ATTRIBUTE_RETURN_CHECK;
++int virNetDevOpenvswitchBridgeGetSTP(const char *brname,
++                                     bool *enable)
++    ATTRIBUTE_NONNULL(1) ATTRIBUTE_NONNULL(2) ATTRIBUTE_RETURN_CHECK;
++
++
+ #endif /* __VIR_NETDEV_OPENVSWITCH_H__ */
+-- 
+1.7.9.5
+

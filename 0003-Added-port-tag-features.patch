@@ -1,0 +1,165 @@
+From 0d4804413f4673bcd4d56e51d50eca898c06a309 Mon Sep 17 00:00:00 2001
+From: root <root@daniele-Aspire-5920>
+Date: Tue, 17 Apr 2012 13:52:47 +0200
+Subject: [PATCH 3/6] Added port tag features
+
+---
+ src/conf/netdev_vport_profile_conf.c |   51 ++++++++++++++++++++++++++++------
+ src/util/virnetdevopenvswitch.c      |    8 ++++++
+ src/util/virnetdevvportprofile.h     |    2 ++
+ 3 files changed, 52 insertions(+), 9 deletions(-)
+
+diff --git a/src/conf/netdev_vport_profile_conf.c b/src/conf/netdev_vport_profile_conf.c
+index 6bc29ba..09da132 100644
+--- a/src/conf/netdev_vport_profile_conf.c
++++ b/src/conf/netdev_vport_profile_conf.c
+@@ -49,6 +49,7 @@ virNetDevVPortProfileParse(xmlNodePtr node)
+     char *virtPortInstanceID = NULL;
+     char *virtPortProfileID = NULL;
+     char *virtPortInterfaceID = NULL;
++    char *virtPortVlanTag = NULL;
+     virNetDevVPortProfilePtr virtPort = NULL;
+     xmlNodePtr cur = node->children;
+ 
+@@ -79,6 +80,7 @@ virNetDevVPortProfileParse(xmlNodePtr node)
+             virtPortInstanceID = virXMLPropString(cur, "instanceid");
+             virtPortProfileID = virXMLPropString(cur, "profileid");
+             virtPortInterfaceID = virXMLPropString(cur, "interfaceid");
++            virtPortVlanTag = virXMLPropString(cur, "vlantag");
+             break;
+         }
+ 
+@@ -199,6 +201,17 @@ virNetDevVPortProfileParse(xmlNodePtr node)
+         } else {
+             virtPort->u.openvswitch.profileID[0] = '\0';
+         }
++        if (virtPortVlanTag != NULL) {
++            if (virStrcpyStatic(virtPort->u.openvswitch.vlanTag,
++                                virtPortVlanTag) == NULL) {
++                virNetDevError(VIR_ERR_XML_ERROR, "%s",
++                               _("vlantag parameter too long"));
++                goto error;
++            }
++        } else {
++            virtPort->u.openvswitch.vlanTag[0] = '\0';
++        }
++
+         break;
+ 
+     default:
+@@ -228,6 +241,9 @@ virNetDevVPortProfileFormat(virNetDevVPortProfilePtr virtPort,
+                             virBufferPtr buf)
+ {
+     char uuidstr[VIR_UUID_STRING_BUFLEN];
++    char *profile_id = NULL;
++    char *vlan_tag = NULL;
++    int ret = -1;
+ 
+     if (!virtPort || virtPort->virtPortType == VIR_NETDEV_VPORT_PROFILE_NONE)
+         return 0;
+@@ -257,23 +273,40 @@ virNetDevVPortProfileFormat(virNetDevVPortProfilePtr virtPort,
+     case VIR_NETDEV_VPORT_PROFILE_OPENVSWITCH:
+         virUUIDFormat(virtPort->u.openvswitch.interfaceID,
+                       uuidstr);
+-        if (virtPort->u.openvswitch.profileID[0] == '\0') {
+-            virBufferAsprintf(buf, "  <parameters interfaceid='%s'/>\n",
+-                              uuidstr);
+-        } else {
+-            virBufferAsprintf(buf, "  <parameters interfaceid='%s' "
+-                              "profileid='%s'/>\n", uuidstr,
+-                              virtPort->u.openvswitch.profileID);
++        virBufferAsprintf(buf, "  <parameters interfaceid='%s'",
++                          uuidstr);
++        if (virtPort->u.openvswitch.profileID[0] != '\0') {
++            if (virAsprintf(&profile_id, " profileid='%s'",
++                            virtPort->u.openvswitch.profileID) < 0)
++                goto out_of_memory;
++            virBufferAdd(buf, profile_id, strlen(profile_id));
++        }
++
++        if (virtPort->u.openvswitch.vlanTag[0] != '\0') {
++            if (virAsprintf(&vlan_tag, " vlantag='%s'",
++                            virtPort->u.openvswitch.vlanTag) < 0)
++                goto out_of_memory;
++            virBufferAdd(buf, vlan_tag, strlen(vlan_tag));
+         }
++        virBufferAddLit(buf, "/>\n");
+ 
+         break;
+ 
+     default:
+         virNetDevError(VIR_ERR_XML_ERROR,
+                        _("unexpected virtualport type %d"), virtPort->virtPortType);
+-        return -1;
++        goto cleanup;
+     }
+ 
+     virBufferAddLit(buf, "</virtualport>\n");
+-    return 0;
++    ret = 0;
++
++cleanup:
++    VIR_FREE(profile_id);
++    VIR_FREE(vlan_tag);
++    return ret;
++
++out_of_memory:
++    virReportOOMError();
++    goto cleanup;
+ }
+diff --git a/src/util/virnetdevopenvswitch.c b/src/util/virnetdevopenvswitch.c
+index a53feb6..bcd4423 100644
+--- a/src/util/virnetdevopenvswitch.c
++++ b/src/util/virnetdevopenvswitch.c
+@@ -113,6 +113,7 @@ int virNetDevOpenvswitchAddPort(const char *brname, const char *ifname,
+     char *ifaceid_ex_id = NULL;
+     char *profile_ex_id = NULL;
+     char *vmid_ex_id = NULL;
++    char *vlan_tag = NULL;
+ 
+     virMacAddrFormat(macaddr, macaddrstr);
+     if (virAsprintf(&attachedmac_ex_id, "external-ids:attached-mac=\"%s\"",
+@@ -131,6 +132,12 @@ int virNetDevOpenvswitchAddPort(const char *brname, const char *ifname,
+     cmd = virCommandNew(OVSVSCTL);
+     virCommandAddArgList(cmd, "--", "--may-exist", "add-port", brname,
+                          ifname, NULL);
++    if (ovsport != NULL && ovsport->u.openvswitch.vlanTag[0] != '\0') {
++        if (virAsprintf(&vlan_tag, "tag=%s",
++                        ovsport->u.openvswitch.vlanTag) < 0)
++            goto out_of_memory;
++        virCommandAddArg(cmd, vlan_tag);
++    }
+     virCommandAddArgList(cmd,
+                          "--", "set", "Interface", ifname, attachedmac_ex_id,
+                          NULL);
+@@ -165,6 +172,7 @@ int virNetDevOpenvswitchAddPort(const char *brname, const char *ifname,
+ 
+     ret = 0;
+ cleanup:
++    VIR_FREE(vlan_tag);
+     VIR_FREE(attachedmac_ex_id);
+     VIR_FREE(ifaceid_ex_id);
+     VIR_FREE(vmid_ex_id);
+diff --git a/src/util/virnetdevvportprofile.h b/src/util/virnetdevvportprofile.h
+index dff5943..5af1ac5 100644
+--- a/src/util/virnetdevvportprofile.h
++++ b/src/util/virnetdevvportprofile.h
+@@ -30,6 +30,7 @@
+ # include "util.h"
+ 
+ # define LIBVIRT_IFLA_VF_PORT_PROFILE_MAX 40
++# define LIBVIRT_IFLA_VF_VLAN_TAG_LENGTH_MAX 5
+ 
+ enum virNetDevVPortProfile {
+     VIR_NETDEV_VPORT_PROFILE_NONE,
+@@ -73,6 +74,7 @@ struct _virNetDevVPortProfile {
+         struct {
+             unsigned char interfaceID[VIR_UUID_BUFLEN];
+             char          profileID[LIBVIRT_IFLA_VF_PORT_PROFILE_MAX];
++            char          vlanTag[LIBVIRT_IFLA_VF_VLAN_TAG_LENGTH_MAX];
+         } openvswitch;
+     } u;
+ };
+-- 
+1.7.9.5
+
